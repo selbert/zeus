@@ -18,6 +18,9 @@ public class MailSendOrderProcessor implements ApplicationListener<InvoiceEvent>
     @Override
     public void onApplicationEvent(InvoiceEvent event) {
         InvoiceDTO invoice = event.getInvoice();
+
+        // Make sure we only send an e-mail if the invoice has been settled
+        // for the first time.
         if (invoice.isSettled() && event.isFirstSettleEvent()) {
             mailService.sendOrderConfirmation(invoice);
         }

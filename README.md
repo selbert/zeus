@@ -1,146 +1,219 @@
 # ln-self-order-pos
-This application was generated using JHipster 5.2.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v5.2.0](https://www.jhipster.tech/documentation-archive/v5.2.0).
 
-## Development
+This application was generated using JHipster 5.2.0, see
+[README-jhipster.md](doc/README-jhipster.md) for more information on how to
+start, build and run the project.
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
+## How to use
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
-2. [Yarn][]: We use Yarn to manage Node dependencies.
-   Depending on your system, you can install Yarn either from source or as a pre-packaged bundle.
+We built this application as a template so you can build your own fancy
+self-order point of sale screen.
+[You can see a demo video of our version here.](https://twitter.com/gugol/status/1042658297927675905)
 
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
+The following chapters will guide you through the steps that are necessary to
+customize the generic `lnPos` to your needs.
 
-    yarn install
+### Set up your own LND node
 
-We use yarn scripts and [Webpack][] as our build system.
+The Spring Boot backend uses the
+[LightningJ Java library](https://www.lightningj.org/) to connect to a
+[Lightning Network Daemon (LND)](https://github.com/lightningnetwork/lnd) over
+[gRPC](https://grpc.io/). You will need to set up an LND node with version
+[`0.5.0-beta`](https://github.com/lightningnetwork/lnd/releases/tag/v0.5-beta)
+or newer.
 
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
+There are many tutorials out there but we recommend either 
+[this (default)](https://github.com/lightningnetwork/lnd/blob/master/docs/INSTALL.md)
+or
+[this (docker)](https://github.com/lightningnetwork/lnd/blob/master/docs/DOCKER.md)
 
-    ./gradlew
-    yarn start
+This application is network agnostic, so it does not matter if you are running
+`testnet` or `mainnet`. But of course we strongly recommend to start with
+`testnet` first!
 
-[Yarn][] is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `yarn update` and `yarn install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `yarn help update`.
+After the LND node is running and is fully synced to the chain, follow the steps
+above. We assume that LND saves its files to `~/.lnd/`. If you changed that
+path, adjust the following example paths accordingly. 
 
-The `yarn run` command will list all of the scripts available to run for this project.
+* Make sure the gRPC port (default `10009`) of the node is open and reachable
+* Copy the file `~/.lnd/tls.cert` to the folder `src/main/resources/certs`
+* Get the hex value of the `invoice.macaroon` and store it somewhere, we'll need
+  this later.  
+  Use this command for example:  
+  `xxd -p -c 999 ~/.lnd/data/chain/bitcoin/testnet/invoice.macaroon`
+* Get the hex value of the `readonly.macaroon` and store it somewhere, we'll need
+  this later.  
+  Use this command for example:  
+  `xxd -p -c 999 ~/.lnd/data/chain/bitcoin/testnet/readonly.macaroon`
 
-### Service workers
+### Configure application
 
-Service workers are commented by default, to enable them please uncomment the following code.
+Now you need to configure the application to use the LND node you just set up.
 
-* The service worker registering script in index.html
+Here is an example `application-dev.yml`:
 
-```html
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-        .register('./service-worker.js')
-        .then(function() { console.log('Service Worker Registered'); });
-    }
-</script>
+```yaml
+logging:
+    level:
+        io.github.jhipster: DEBUG
+        ch.puzzle.ln.pos: DEBUG
+
+spring:
+    profiles:
+        active: dev
+        include: swagger
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use Webpack dev server + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        # See section 'Use persistent development DB' in the README to set this up
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:postgresql://localhost:5441/ln_self_order_pos
+        username: ln_self_order_pos
+        password: ln_self_order_pos
+    jpa:
+        database-platform: io.github.jhipster.domain.util.FixedPostgreSQL82Dialect
+        database: POSTGRESQL
+        show-sql: false
+        properties:
+            hibernate.id.new_generator_mappings: true
+            hibernate.cache.use_second_level_cache: false
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: true
+    liquibase:
+        contexts: dev
+        drop-first: true
+    mail:
+        host: localhost
+        port: 25
+        username:
+        password:
+    messages:
+        cache-duration: PT1S # 1 second, see the ISO 8601 standard
+    thymeleaf:
+        cache: false
+
+server:
+    port: 8080
+
+jhipster:
+    http:
+        version: V_1_1 # To use HTTP/2 you will need SSL support (see above the "server.ssl" configuration)
+    cache: # Cache configuration
+        ehcache: # Ehcache configuration
+            time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
+            max-entries: 100 # Number of objects in each cache entry
+    security:
+        authentication:
+            jwt:
+                secret: my-secret-token-to-change-in-production
+    mail: # specific JHipster mail property, for standard properties see MailProperties
+        base-url: http://127.0.0.1:8080
+    cors:
+        allowed-origins: "*"
+        allowed-methods: GET, PUT, POST, DELETE, OPTIONS
+        allowed-headers: "*"
+        exposed-headers:
+        allow-credentials: true
+        max-age: 1800
+
+application:
+    bitcoin:
+        # point this to /rest/chaininfo.json if you have a full node. set it
+        # to 'disabled' if you don't have a bitcoind full node running.
+        restUrl: disabled
+    mail:
+        send: true
+        recipient: mail@example.com
+    lnd:
+        host: localhost
+        port: 10009
+        certPath: classpath:/certs/tls.cert
+        # insert the hex values of the macaroon obtained in the previous step here!
+        invoiceMacaroonHex: 0201036c.....
+        readonlyMacaroonHex: 0201036c.....
+
 ```
 
-Note: workbox creates the respective service worker and dynamically generate the `service-worker.js`
+The most important thing you need to change is to add the hex values for the
+macaroons that you saved somewhere in the previous step.
 
-### Managing dependencies
+### Write your own invoice processor
 
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
+Invoice processors are invoked after a Lightning Network invoice has been
+updated. Usually, this means it has been paid/settled. You can write your
+own invoice processor by implementing `ApplicationListener<InvoiceEvent>` in 
+your service.
 
-    yarn add --exact leaflet
+There is an example `ch.puzzle.ln.pos.service.processors.MailSendOrderProcessor`
+service that sends out an e-mail whenever an invoice has been paid:
 
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
+```java
+package ch.puzzle.ln.pos.service.processors;
 
-    yarn add --dev --exact @types/leaflet
+import ch.puzzle.ln.pos.service.InvoiceEvent;
+import ch.puzzle.ln.pos.service.MailService;
+import ch.puzzle.ln.pos.service.dto.InvoiceDTO;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
 
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Edit [src/main/webapp/app/vendor.ts](src/main/webapp/app/vendor.ts) file:
-~~~
-import 'leaflet/dist/leaflet.js';
-~~~
+@Service
+public class MailSendOrderProcessor implements ApplicationListener<InvoiceEvent> {
 
-Edit [src/main/webapp/content/css/vendor.css](src/main/webapp/content/css/vendor.css) file:
-~~~
-@import '~leaflet/dist/leaflet.css';
-~~~
-Note: there are still few other things remaining to do for Leaflet that we won't detail here.
+    private final MailService mailService;
 
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
+    public MailSendOrderProcessor(MailService mailService) {
+        this.mailService = mailService;
+    }
 
-### Using angular-cli
+    @Override
+    public void onApplicationEvent(InvoiceEvent event) {
+        InvoiceDTO invoice = event.getInvoice();
+        
+        // Make sure we only send an e-mail if the invoice has been settled
+        // for the first time.
+        if (invoice.isSettled() && event.isFirstSettleEvent()) {
+            mailService.sendOrderConfirmation(invoice);
+        }
+    }
+}
 
-You can also use [Angular CLI][] to generate some custom client code.
+```
 
-For example, the following command:
+You can customize this however you want.
 
-    ng generate component my-component
+### Build your own web GUI
 
-will generate few files:
+There is a simple generic example self-order store implemented in the web GUI.
 
-    create src/main/webapp/app/my-component/my-component.component.html
-    create src/main/webapp/app/my-component/my-component.component.ts
-    update src/main/webapp/app/app.module.ts
+To change the products and their price, make sure to edit the following files:
 
+* `src/main/java/ch/puzzle/ln/pos/domain/enums/OrderItemType.java`
+* `src/main/webapp/app/shared/model/invoice.model.ts`
+* `src/main/webapp/app/shared/model/product.model.ts`
 
-## Building for production
+To change the way the self-order store looks, edit the following files:
 
-To optimize the ln-self-order-pos application for production, run:
+* `src/main/webapp/app/shop/self-service.component.html`
+* `src/main/webapp/app/shop/self-service.component.scss`
 
-    ./gradlew -Pprod clean bootWar
+## Misc
 
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
+### Admin GUI
 
-    java -jar build/libs/*.war
+There is a whole admin area available if you change the URL from
+`/#/self-service` to `/#/admin`. The default username is `admin` and the
+password is `admin`.
 
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
+Apart from the default jHipster management tools like user management, metrics,
+health, configuration, audits, logs and API you also have an overview of
+your invoices and a page that displays the status of your LND node.
 
-Refer to [Using JHipster in production][] for more details.
-
-## Testing
-
-To launch your application's tests, run:
-
-    ./gradlew test
-
-### Client tests
-
-Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
-
-    yarn test
-
-
-
-For more information, refer to the [Running tests page][].
-
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a postgresql database in a docker container, run:
-
-    docker-compose -f src/main/docker/postgresql.yml up -d
-
-To stop it and remove the container, run:
-
-    docker-compose -f src/main/docker/postgresql.yml down
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-    ./gradlew bootWar -Pprod buildDocker
-
-Then run:
-
-    docker-compose -f src/main/docker/app.yml up -d
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Use persistent development DB
+### Use persistent development DB
 
 ```bash
 docker run \
@@ -154,28 +227,3 @@ docker run \
   centos/postgresql-96-centos7
 
 ```
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[JHipster Homepage and latest documentation]: https://www.jhipster.tech
-[JHipster 5.2.0 archive]: https://www.jhipster.tech/documentation-archive/v5.2.0
-
-[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v5.2.0/development/
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v5.2.0/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v5.2.0/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/v5.2.0/running-tests/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v5.2.0/setting-up-ci/
-
-
-[Node.js]: https://nodejs.org/
-[Yarn]: https://yarnpkg.org/
-[Webpack]: https://webpack.github.io/
-[Angular CLI]: https://cli.angular.io/
-[BrowserSync]: http://www.browsersync.io/
-[Jest]: https://facebook.github.io/jest/
-[Jasmine]: http://jasmine.github.io/2.0/introduction.html
-[Protractor]: https://angular.github.io/protractor/
-[Leaflet]: http://leafletjs.com/
-[DefinitelyTyped]: http://definitelytyped.org/
