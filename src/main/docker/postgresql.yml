@@ -1,0 +1,11 @@
+version: '2'
+services:
+    ln-self-order-pos-postgresql:
+        image: postgres:10.4
+        # volumes:
+        #     - ~/volumes/jhipster/ln-self-order-pos/postgresql/:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=ln-self-order-pos
+            - POSTGRES_PASSWORD=ln-self-order-pos
+        ports:
+            - 5441:5432

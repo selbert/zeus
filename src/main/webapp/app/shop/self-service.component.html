@@ -1,0 +1,118 @@
+<div class="self-service-grid">
+    <div class="grid-card one top-left flash-0">
+        <h3>
+            {{product(0).title}}<br/>
+            {{orders[0].orderItems[0].options[0]}}
+        </h3>
+        <qrcode *ngIf="orders[0].paymentRequest"
+                [qrdata]="orders[0].paymentRequest"
+                [size]="qrCodeSize"
+                level="L"
+                [attr.title]="''">
+        </qrcode>
+        <div class="alert alert-danger" *ngIf="!orders[0].paymentRequest">
+            Shop is currently closed for online orders. Please come back tomorrow!
+        </div>
+        <section>
+            <div [class]="'picture ' + product(0).type.toLowerCase()"></div>
+            <div class="price">
+                <span class="unit">CHF</span>
+                {{product(0).price | number : '1.2-2'}}
+            </div>
+        </section>
+    </div>
+    <div class="grid-card two top-right flash-1">
+        <h3>
+            {{product(1).title}}<br/>
+            {{orders[1].orderItems[0].options[0]}}
+        </h3>
+        <qrcode *ngIf="orders[1].paymentRequest"
+                [qrdata]="orders[1].paymentRequest"
+                [size]="qrCodeSize"
+                level="L"
+                [attr.title]="''">
+        </qrcode>
+        <div class="alert alert-danger" *ngIf="!orders[1].paymentRequest">
+            Shop is currently closed for online orders. Please come back tomorrow!
+        </div>
+        <section>
+            <div [class]="'picture ' + product(1).type.toLowerCase()"></div>
+            <div class="price">
+                <span class="unit">CHF</span>
+                {{product(1).price | number : '1.2-2'}}
+            </div>
+        </section>
+    </div>
+    <div class="grid-card tre bottom-left flash-2">
+        <h3>
+            {{product(2).title}}<br/>
+            {{orders[2].orderItems[0].options[0]}}
+        </h3>
+        <qrcode *ngIf="orders[2].paymentRequest"
+                [qrdata]="orders[2].paymentRequest"
+                [size]="qrCodeSize"
+                level="L"
+                [attr.title]="''">
+        </qrcode>
+        <div class="alert alert-danger" *ngIf="!orders[2].paymentRequest">
+            Shop is currently closed for online orders. Please come back tomorrow!
+        </div>
+        <section>
+            <div [class]="'picture ' + product(2).type.toLowerCase()"></div>
+            <div class="price">
+                <span class="unit">CHF</span>
+                {{product(2).price | number : '1.2-2'}}
+            </div>
+        </section>
+    </div>
+    <div class="grid-card fou bottom-right flash-3">
+        <h3>
+            {{product(3).title}}<br/>
+            {{orders[3].orderItems[0].options[0]}}
+        </h3>
+        <qrcode *ngIf="orders[3].paymentRequest"
+                [qrdata]="orders[3].paymentRequest"
+                [size]="qrCodeSize"
+                level="L"
+                [attr.title]="''">
+        </qrcode>
+        <div class="alert alert-danger" *ngIf="!orders[3].paymentRequest">
+            Shop is currently closed for online orders. Please come back tomorrow!
+        </div>
+        <section>
+            <div [class]="'picture ' + product(3).type.toLowerCase()"></div>
+            <div class="price">
+                <span class="unit">CHF</span>
+                {{product(3).price | number : '1.2-2'}}
+            </div>
+        </section>
+    </div>
+    <div class="grid-card box">
+        <div id="flash-receiver"></div>
+        <h1 id="site-title">
+            <img width="96" class="right" src="/content/icons/puzzle-itc.png"
+                 alt="Puzzle ITC GmbH">
+        </h1>
+        <div class="info">
+            <strong>
+                Buy delicious product 1 to 4 and pay with Bitcoin over the
+                Lightning Network <span class="lightning-bolt"></span>
+            </strong>
+            <br/>
+            <ol>
+                <li>Scan and pay one of the QR codes with your Lightning Network enabled wallet.</li>
+                <li>Get your product 1 to 4 immediately.</li>
+            </ol>
+        </div>
+        <div class="info-bottom">
+            This is a project of <a href="https://www.puzzle.ch">Puzzle ITC GmbH</a>.
+            <span *ngIf="orders[0].exchangeRate">
+                The current exchange <br/>
+                rate is <strong>{{orders[0].exchangeRate | number : '1.2-2'}} CHF/BTC</strong>.
+                New QR codes with updated exchange rate in
+                <span *ngIf="countdownSeconds < 20" class="danger">{{countdownSeconds}} seconds.</span>
+                <span *ngIf="countdownSeconds >= 20">{{countdownSeconds}} seconds.</span>
+            </span>
+        </div>
+    </div>
+</div>

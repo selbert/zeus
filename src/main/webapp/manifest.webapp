@@ -1,0 +1,16 @@
+{
+  "name": "Self-order Point of Sale solution, powered by the Lightning Network",
+  "short_name": "ln-self-order-pos",
+  "icons": [
+      {
+          "src": "./content/icons/logo-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+      }
+  ],
+  "theme_color": "#6cb02c",
+  "background_color": "#ffffff",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

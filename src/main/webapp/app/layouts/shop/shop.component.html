@@ -1,0 +1,24 @@
+<div id="page">
+
+    <header class="site-header">
+        <div class="site-branding">
+            <h1 id="site-title">
+                Self-order Point of Sale solution
+            </h1>
+            <h2>
+                Buy delicious product 1 to 4 and pay with Bitcoin over the Lightning Network <span class="lightning-bolt"></span>
+            </h2>
+            <div class="alert alert-danger" *ngIf="closed">
+                Our shop is currently closed for online orders. But you can still browser our selection.<br/>
+                <a routerLink="/shop/help" fragment="openinghours-title">
+                    See our opening hours
+                </a>
+            </div>
+        </div>
+    </header>
+    <div id="content">
+        <router-outlet></router-outlet>
+        <router-outlet name="popup"></router-outlet>
+        <jhi-footer></jhi-footer>
+    </div>
+</div>

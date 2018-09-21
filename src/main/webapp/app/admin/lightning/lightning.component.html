@@ -1,0 +1,90 @@
+<div *ngIf="info">
+    <h2 id="tracker-page-heading">
+        <span>Lightning Network status</span>
+        <button class="btn btn-primary float-right" (click)="refresh()">
+            <fa-icon [icon]="'sync'"></fa-icon> <span>Refresh</span>
+        </button>
+    </h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <b>LND</b>
+            <div class="row"
+                 *ngFor="let key of ['block_height', 'block_hash', 'alias', 'identity_pubkey', 'chains', 'testnet']">
+                <div class="col-md-3">{{capitalize(key)}}</div>
+                <div class="col-md-9 text-right">{{info.lndInfo[key]}}</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <b>Bitcoin</b>
+            <div class="row"
+                 *ngFor="let key of ['blocks', 'bestblockhash', 'headers']">
+                <div class="col-md-3">{{capitalize(key)}}</div>
+                <div class="col-md-9 text-right">{{info.bitcoinInfo[key]}}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Price CHF</div>
+                <div class="col-md-9 text-right">{{info.bitcoinPrice.buy |
+                    number : '1.2-2'}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Channels</h3>
+    <p>
+        <span>Active: </span> <b>{{activeChannels.length}}</b> -
+        <span>Total: </span> <b>{{info.lndChannels.length}}</b>
+    </p>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Active</th>
+                    <th>Capacity</th>
+                    <th>Balance</th>
+                    <th class="text-right">Remote / Channel point</th>
+                    <th class="text-right">Updates</th>
+                    <th class="text-right">Received</th>
+                    <th class="text-right">Sent</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let channel of info.lndChannels">
+                    <td>
+                        <fa-icon [icon]="channel.active ? 'check' : 'ban'">
+                        </fa-icon>
+                    </td>
+                    <td> {{channel.capacity | number : '1.0-0'}}</td>
+                    <td>
+                        local balance: {{channel.local_balance | number : '1.0-0'}},
+                        remote balance: {{channel.remote_balance | number : '1.0-0'}}
+                        <ngb-progressbar [max]="channel.capacity"
+                                         [value]="channel.local_balance"
+                                         [striped]="true" [animated]="false"
+                                         type="success">
+                        </ngb-progressbar>
+                    </td>
+                    <td class="text-right">
+                        {{channel.remote_pubkey}}
+                        <span *ngIf="channel.remote" [style.color]="channel.remote.node.color">
+                            ({{channel.remote.node.alias}})
+                        </span>
+                        <br/>
+                        {{channel.channel_point}}
+                    </td>
+                    <td class="text-right">
+                        {{channel.num_updates | number : '1.0-0'}}
+                    </td>
+                    <td class="text-right">
+                        {{channel.total_satoshis_received | number : '1.0-0'}}
+                    </td>
+                    <td class="text-right">
+                        {{channel.total_satoshis_sent | number : '1.0-0'}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

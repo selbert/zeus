@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h4 class="modal-title">Check out</h4>
+    <button aria-label="Close" data-dismiss="modal" class="close" type="button" (click)="activeModal.dismiss('closed')"><span
+        aria-hidden="true">x</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row justify-content-center" *ngIf="!closed">
+        <div class="col-md-11">
+            <div class="alert alert-danger" *ngIf="checkoutError">
+                <strong>Failed to check out!</strong><br/>
+                Please try again.<br/>
+                <small>Code/message: {{checkoutError}}</small>
+            </div>
+        </div>
+        <div class="col-md-11 payment-request">
+            <fa-icon size="6x" icon="check-circle" class="success"></fa-icon>
+            <div class="intro">
+                Thank you for your payment of CHF {{order.total | number : '1.2-2'}}
+                ({{order.amount | number : '1.0-0'}} Satoshi).<br/>
+                You can claim your order by mentioning the name:<br/>
+                <strong>{{order.orderName}}</strong>
+            </div>
+            <ngb-progressbar *ngIf="!showCloseButton" [animated]="true" [striped]="true" [max]="countDownInitial" [value]="countDownValue">
+            </ngb-progressbar>
+            <button (click)="close()" class="btn btn-primary" *ngIf="showCloseButton">
+                Close
+            </button>
+        </div>
+    </div>
+    <div class="row justify-content-center" *ngIf="closed">
+        <div class="col-md-11">
+            <div class="alert alert-danger">
+                <strong>Shop is closed!</strong><br/>
+                We are sorry, but the shop is currently closed for online orders.<br/>
+                Please come back tomorrow.<br/><br/>
+                <a (click)="close()" routerLink="/shop/help" fragment="openinghours-title">
+                    See our opening hours
+                </a>
+            </div>
+            <button (click)="close()" class="btn btn-primary">
+                Close
+            </button>
+        </div>
+    </div>
+</div>

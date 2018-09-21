@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${data.title}">Self-service Order </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+        body {
+            width: 520px;
+            padding: 10px;
+            line-height: 30px;
+        }
+
+        small {
+            line-height: 12px;
+        }
+
+        table tr.total th {
+            padding-bottom: 25px;
+            border-top: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<p>
+    New order with ID <span th:text="${data.invoice.referenceId}"></span>
+</p>
+<h3>Summary</h3>
+<table border="0" cellspacing="0" cellpadding="1" width="400">
+    <tbody>
+    <tr th:each="opt : ${data.options}">
+        <td th:attr="align=${opt[0]}" th:text="${opt[1]}"></td>
+        <td th:attr="align=${opt[2]}" th:text="${opt[3]}"></td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th align="left">Total</th>
+        <th align="right" th:text="${data.total}"></th>
+    </tr>
+    <tr>
+        <td align="left">
+            includes <span th:text="${data.taxBase}"></span>% VAT
+        </td>
+        <td align="right" th:text="${data.taxAmount}"></td>
+    </tr>
+    </tfoot>
+</table>
+<br/><br/>
+<h3 th:text="${data.paymentText}"></h3>
+<br/><br/>
+<small>
+    Order date: <span th:text="${data.invoice.creationDate}"></span> UTC<br/>
+    AMOUNT_SAT: <span th:text="${data.invoice.amount}"></span>,
+    EXCH_RATE: <span th:text="${data.invoice.exchangeRate}"></span>,
+    RHASH: <span th:text="${data.invoice.hashHex}"></span>,
+    PREIMAGE: <span th:text="${data.invoice.preimageHex}"></span>
+</small>
+</body>
+</html>

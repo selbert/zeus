@@ -1,0 +1,23 @@
+<h3 *ngIf="!isAuthenticated()">Welcome to the admin section. Please log in.</h3>
+<h3 *ngIf="isAuthenticated()">Welcome to the admin section, {{account.login}}.</h3>
+
+<div *ngIf="isAuthenticated() && shopActiveConfig">
+    <div *ngIf="!shopActiveConfig.valueBoolean">
+        Your shop is currently <strong>disabled</strong>!<br/>
+        <button class="btn btn-primary" (click)="setShopActive(true)">
+            Enable shop
+        </button>
+    </div>
+
+    <div *ngIf="shopActiveConfig.valueBoolean">
+        Your shop is currently <strong>enabled</strong>!<br/>
+        <button class="btn btn-danger" (click)="setShopActive(false)">
+            Disable shop
+        </button>
+    </div>
+
+    <br/><br/><br/>
+    <button class="btn btn-danger" (click)="restartShop()">
+        Send reload command to all self service displays
+    </button>
+</div>
