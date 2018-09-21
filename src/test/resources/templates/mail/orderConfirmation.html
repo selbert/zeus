@@ -22,7 +22,9 @@
 </head>
 <body>
 <p>
-    New order with ID <span th:text="${data.invoice.referenceId}"></span>
+    New order with ID <span th:text="${data.invoice.referenceId}"></span><br/>
+    Name for order pickup:
+    <strong class="large" th:text="${data.invoice.orderName}"></strong>
 </p>
 <h3>Summary</h3>
 <table border="0" cellspacing="0" cellpadding="1" width="400">
