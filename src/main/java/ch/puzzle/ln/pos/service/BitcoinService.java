@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -20,6 +22,7 @@ public class BitcoinService {
 
     private static final Long SATOSHIS_IN_BTC = 100000000L;
     private static final String FIELD_BUY = "buy";
+    private static final String DISABLED_VALUE = "disabled";
 
     private final Bitcoin bitcoinProperties;
     private final RestTemplate tickerTemplate;
@@ -49,6 +52,12 @@ public class BitcoinService {
 
     public Map<String, Object> chainInfo() throws Exception {
         RestTemplate tpl = new RestTemplate();
+        if (Objects.equals(bitcoinProperties.getRestUrl(), DISABLED_VALUE)) {
+            Map<String, Object> disabled = new HashMap<>();
+            disabled.put("blocks", "<rest URL check disabled>");
+            disabled.put("bestblockhash", "<rest URL check disabled>");
+            return disabled;
+        }
         RequestEntity<Void> request = RequestEntity.get(bitcoinProperties.getRestUri()).accept(APPLICATION_JSON).build();
         ResponseEntity<Map<String, Object>> parsed = tpl.exchange(request, new InfoResponseType());
         if (parsed.getStatusCode().is2xxSuccessful() && parsed.getBody() != null) {
