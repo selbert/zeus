@@ -1,5 +1,7 @@
 # ln-self-order-pos
 
+![screenshot](doc/screenshot.png)
+
 This application was generated using JHipster 5.2.0, see
 [README-jhipster.md](doc/README-jhipster.md) for more information on how to
 start, build and run the project.
