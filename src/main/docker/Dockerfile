@@ -1,7 +1,7 @@
-FROM registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift
+FROM openjdk:8-jdk-alpine
 
 USER root
-RUN yum -y install openssl
+RUN apk add --update --no-cache openssl
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
