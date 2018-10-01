@@ -1,0 +1,28 @@
+sudo: required
+language: java
+
+branches:
+  only:
+  - master
+
+services:
+ - docker
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.m2
+
+before_install:
+  - export TZ=Europe/Zurich
+script: ./gradlew clean build
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      cp build/libs/ln*.war src/main/docker;
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker build -t "guggero/ln-self-order-pos:latest" src/main/docker/;
+      docker build -t "guggero/ln-self-order-pos:$TRAVIS_BUILD_NUMBER" src/main/docker/;
+      docker push "guggero/ln-self-order-pos:latest";
+      docker push "guggero/ln-self-order-pos:$TRAVIS_BUILD_NUMBER";
+    fi
