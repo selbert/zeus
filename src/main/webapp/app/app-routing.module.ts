@@ -11,11 +11,11 @@ import { SelfServiceComponent } from 'app/shop/self-service.component';
             [
                 {
                     path: '',
-                    redirectTo: '/self-service',
+                    redirectTo: '/self-service/ln-pos',
                     pathMatch: 'full'
                 },
                 {
-                    path: 'self-service',
+                    path: 'self-service/:id',
                     component: SelfServiceComponent
                 },
                 {

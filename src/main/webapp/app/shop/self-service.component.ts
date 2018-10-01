@@ -9,6 +9,7 @@ import { interval } from 'rxjs/index';
 import { Subscription } from 'rxjs/Rx';
 import { CheckoutDialogService } from 'app/shop/checkout-dialog.service';
 import { SUCCESS_FLASH_DURATION } from 'app/shop/checkout.component';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 const DEFAULT_COUNTDOWN_SECONDS = 300;
 const DEFAULT_DIALOG_TIMEOUT_SECONDS = 10;
@@ -23,10 +24,17 @@ export class SelfServiceComponent implements OnDestroy {
     qrCodeSize = 250;
     error: string;
     orders: Invoice[];
+    memoPrefix: string;
     countdownSubscription: Subscription;
     countdownSeconds = DEFAULT_COUNTDOWN_SECONDS;
 
-    constructor(private checkoutService: CheckoutService, private checkoutDialogService: CheckoutDialogService) {
+    constructor(
+        private checkoutService: CheckoutService,
+        private checkoutDialogService: CheckoutDialogService,
+        private route: ActivatedRoute,
+        private router: Router
+    ) {
+        this.route.paramMap.subscribe((params: ParamMap) => (this.memoPrefix = params.get('id')));
         this.startCountdown();
         this.setupInvoices();
         this.listenOnWebSocket();
@@ -73,6 +81,7 @@ export class SelfServiceComponent implements OnDestroy {
     setupInvoices() {
         this.orders = getSelfServiceOrders();
         this.orders.forEach((order, index) => {
+            order.memoPrefix = this.memoPrefix;
             this.checkoutService.createInvoice(order).subscribe((invoice: Invoice) => {
                 this.orders[index] = invoice;
             }, err => (this.error = err.error.message));

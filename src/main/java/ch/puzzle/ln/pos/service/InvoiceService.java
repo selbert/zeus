@@ -150,7 +150,11 @@ public class InvoiceService implements InvoiceHandler {
             invoice.getOrderItems().add(item);
         });
         invoice.setReferenceId(UUID.randomUUID().toString().toLowerCase());
-        invoice.setMemo(applicationProperties.getMemoPrefix() + invoice.getReferenceIdShort() + " " + invoice.getOrderName() +
+        String memoPrefix = applicationProperties.getMemoPrefix();
+        if (order.getMemoPrefix() != null) {
+            memoPrefix = order.getMemoPrefix().trim() + " ";
+        }
+        invoice.setMemo(memoPrefix + invoice.getReferenceIdShort() + " " + invoice.getOrderName() +
             " (" + ConvertUtil.formatCurrency(applicationProperties.getCurrencyTicker(), invoice.getTotal()) + ")");
         return invoice;
     }
