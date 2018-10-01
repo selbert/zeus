@@ -1,19 +1,30 @@
-sudo: required
-language: java
+os:
+  - linux
+
+services:
+  - docker
+
+language: node_js
+
+node_js:
+  - "8.12.0"
+
+jdk:
+  - oraclejdk8
 
 branches:
   only:
   - master
 
-services:
- - docker
-
 cache:
   directories:
     - node_modules
     - $HOME/.m2
+    - $HOME/.gradle
 
 before_install:
+  - jdk_switcher use oraclejdk8
+  - java -version
   - export TZ=Europe/Zurich
 script: ./gradlew clean build
 
