@@ -194,6 +194,7 @@ dependencies {
     compile "org.mapstruct:mapstruct-jdk8:${mapstruct_version}"
     compile "org.lightningj:lightningj:0.5.0-Beta"
     compile "io.netty:netty-tcnative-boringssl-static:2.0.12.Final"
+    compile "org.twitter4j:twitter4j-core:4.0.7"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen"
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor") {

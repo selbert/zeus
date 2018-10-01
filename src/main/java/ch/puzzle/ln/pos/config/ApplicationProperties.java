@@ -22,6 +22,7 @@ public class ApplicationProperties {
     private Lnd lnd = new Lnd();
     private Bitcoin bitcoin = new Bitcoin();
     private Mail mail = new Mail();
+    private Twitter twitter = new Twitter();
 
     public String getMemoPrefix() {
         return memoPrefix;
@@ -57,6 +58,10 @@ public class ApplicationProperties {
 
     public Mail getMail() {
         return mail;
+    }
+
+    public Twitter getTwitter() {
+        return twitter;
     }
 
     public static class Lnd {
@@ -175,10 +180,19 @@ public class ApplicationProperties {
 
     public static class Mail {
 
+        private boolean processorEnabled = false;
         private boolean send = false;
         private String recipient = "";
         private String subject = "";
         private String paymentText = "";
+
+        public boolean isProcessorEnabled() {
+            return processorEnabled;
+        }
+
+        public void setProcessorEnabled(boolean processorEnabled) {
+            this.processorEnabled = processorEnabled;
+        }
 
         public boolean isSend() {
             return send;
@@ -210,6 +224,55 @@ public class ApplicationProperties {
 
         public void setPaymentText(String paymentText) {
             this.paymentText = paymentText;
+        }
+    }
+
+    public static class Twitter {
+
+        private boolean processorEnabled = false;
+        private String consumerKey;
+        private String consumerSecret;
+        private String accessToken;
+        private String accessTokenSecret;
+
+        public boolean isProcessorEnabled() {
+            return processorEnabled;
+        }
+
+        public void setProcessorEnabled(boolean processorEnabled) {
+            this.processorEnabled = processorEnabled;
+        }
+
+        public String getConsumerKey() {
+            return consumerKey;
+        }
+
+        public void setConsumerKey(String consumerKey) {
+            this.consumerKey = consumerKey;
+        }
+
+        public String getConsumerSecret() {
+            return consumerSecret;
+        }
+
+        public void setConsumerSecret(String consumerSecret) {
+            this.consumerSecret = consumerSecret;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public String getAccessTokenSecret() {
+            return accessTokenSecret;
+        }
+
+        public void setAccessTokenSecret(String accessTokenSecret) {
+            this.accessTokenSecret = accessTokenSecret;
         }
     }
 }

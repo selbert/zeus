@@ -104,5 +104,8 @@ application:
         connectTimeout: 3000
         readTimeout: 3000
     mail:
+        processorEnabled: true
         subject: 'ln-pos Order '
         paymentText: Thank you for paying with Bitcoin!
+    twitter:
+        processorEnabled: false

@@ -1,5 +1,6 @@
 package ch.puzzle.ln.pos.service.processors;
 
+import ch.puzzle.ln.pos.config.ApplicationProperties;
 import ch.puzzle.ln.pos.service.InvoiceEvent;
 import ch.puzzle.ln.pos.service.MailService;
 import ch.puzzle.ln.pos.service.dto.InvoiceDTO;
@@ -9,14 +10,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailSendOrderProcessor implements ApplicationListener<InvoiceEvent> {
 
+    private final ApplicationProperties properties;
     private final MailService mailService;
 
-    public MailSendOrderProcessor(MailService mailService) {
+    public MailSendOrderProcessor(ApplicationProperties properties, MailService mailService) {
+        this.properties = properties;
         this.mailService = mailService;
     }
 
     @Override
     public void onApplicationEvent(InvoiceEvent event) {
+        if (!properties.getMail().isProcessorEnabled()) {
+            return;
+        }
+
         InvoiceDTO invoice = event.getInvoice();
 
         // Make sure we only send an e-mail if the invoice has been settled
