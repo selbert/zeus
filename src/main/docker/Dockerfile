@@ -1,7 +1,7 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-slim
 
 USER root
-RUN apk add --update --no-cache openssl
+RUN apt-get update && apt-get -y install openssl
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
