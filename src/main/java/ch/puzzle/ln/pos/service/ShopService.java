@@ -19,7 +19,7 @@ public class ShopService {
 
     private static final int DELAY_START = 15;
     private static final LocalTime OPENING_HOUR = LocalTime.of(7, 30);
-    private static final LocalTime CLOSING_HOUR = LocalTime.of(18, 0);
+    private static final LocalTime CLOSING_HOUR = LocalTime.of(23, 59);
     private static final List<LocalDate> PUBLIC_HOLIDAYS = asList(
         of(1970, 1, 1),     // first of January
         of(1970, 1, 2),     // second of January
