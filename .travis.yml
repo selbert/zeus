@@ -26,7 +26,7 @@ before_install:
   - jdk_switcher use oraclejdk8
   - java -version
   - export TZ=Europe/Zurich
-script: ./gradlew clean build
+script: ./gradlew -Pprod clean bootWar
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
