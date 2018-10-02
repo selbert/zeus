@@ -120,7 +120,7 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
             LOG.error("Couldn't wait 5 seconds!", e);
         } catch (StatusException | ValidationException e) {
             LOG.error("Couldn't subscribe to invoices!", e);
-            if (MAX_RETRIES < 5) {
+            if (retries < MAX_RETRIES) {
                 onError(e);
             }
         }
