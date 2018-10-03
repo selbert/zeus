@@ -79,7 +79,7 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
     }
 
     public ListChannelsResponse getChannels() throws StatusException, ValidationException {
-        LOG.info("getChannels called");
+        LOG.debug("getChannels called");
         return syncApiReadOnly.listChannels(true, false, true, false);
     }
 
