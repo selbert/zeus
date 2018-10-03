@@ -14,30 +14,30 @@ export interface Product {
 }
 
 const PRODUCT_1: Product = {
-    title: 'Product 1',
+    title: 'Lightning Ale',
     type: OrderItemType.PRODUCT_1,
-    price: 5.0,
+    price: 2.0,
     options: ['"Option 1"', '"Option 2"'],
     cart: []
 };
 const PRODUCT_2: Product = {
-    title: 'Product 2',
+    title: 'Block Brew',
     type: OrderItemType.PRODUCT_2,
-    price: 5.0,
+    price: 2.0,
     options: ['"Option 1"', '"Option 2"'],
     cart: []
 };
 const PRODUCT_3: Product = {
-    title: 'Product 3',
+    title: 'Coin Stout',
     type: OrderItemType.PRODUCT_3,
-    price: 5.0,
+    price: 2.0,
     options: ['"Option 1"', '"Option 2"'],
     cart: []
 };
 const PRODUCT_4: Product = {
-    title: 'Product 4',
+    title: 'Thunderous Amber',
     type: OrderItemType.PRODUCT_4,
-    price: 5.0,
+    price: 2.0,
     options: ['"Option 1"', '"Option 2"'],
     cart: []
 };
@@ -76,22 +76,22 @@ export function getSelfServiceItems() {
         {
             itemType: OrderItemType.PRODUCT_1,
             count: 1,
-            options: ['"Flavor 1"']
+            options: ['"Large"']
         },
         {
             itemType: OrderItemType.PRODUCT_2,
             count: 1,
-            options: ['"Flavor 2"']
+            options: ['"Large"']
         },
         {
             itemType: OrderItemType.PRODUCT_3,
             count: 1,
-            options: ['"Flavor 3"']
+            options: ['"Small"']
         },
         {
             itemType: OrderItemType.PRODUCT_4,
             count: 1,
-            options: ['"Flavor 4"']
+            options: ['"Small"']
         }
     ];
 }
