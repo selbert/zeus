@@ -5,6 +5,8 @@ import com.codahale.metrics.annotation.Timed;
 import org.lightningj.lnd.wrapper.message.GetInfoResponse;
 import org.lightningj.lnd.wrapper.message.ListChannelsResponse;
 import org.lightningj.lnd.wrapper.message.NodeInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/lnd")
 public class LndResource extends AbstractHealthIndicator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LndResource.class);
 
     private final LndService lndService;
 
@@ -50,6 +54,7 @@ public class LndResource extends AbstractHealthIndicator {
                 .withDetail("blockHash", info.getBlockHash())
                 .up();
         } catch (Exception e) {
+            LOG.error("Exception in health check for bitcoin!", e);
             builder.down(e);
         }
     }

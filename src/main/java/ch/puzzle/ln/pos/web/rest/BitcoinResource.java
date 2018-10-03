@@ -51,6 +51,7 @@ public class BitcoinResource extends AbstractHealthIndicator {
             Object price = bitcoinService.pricePerBitcoinIn(applicationProperties.getCurrencyTicker());
 
             if (info == null || price == null) {
+                LOG.error("Error in health check for bitcoin, info or price is null! Info: {}, price: {}", info, price);
                 builder.down();
                 return;
             }
@@ -61,6 +62,7 @@ public class BitcoinResource extends AbstractHealthIndicator {
                 .withDetail("blockHash", info.get("bestblockhash"))
                 .up();
         } catch (Exception e) {
+            LOG.error("Exception in health check for bitcoin!", e);
             builder.down(e);
         }
     }
