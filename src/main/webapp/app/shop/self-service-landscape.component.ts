@@ -98,7 +98,7 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
         setTimeout(() => {
             this.checkoutDialogService.openDialog(invoice, true, DEFAULT_DIALOG_TIMEOUT_SECONDS);
             if (index >= 0) {
-                this.orders[index] = getSelfServiceOrders()[index];
+                this.orders[index] = getSelfServiceOrders(true)[index];
                 this.checkoutService.createInvoice(this.orders[index]).subscribe((newInvoice: Invoice) => {
                     this.orders[index] = newInvoice;
                 }, err => (this.error = err.error.message));
