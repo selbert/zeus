@@ -1,10 +1,8 @@
 import { Moment } from 'moment';
 
 export enum OrderItemType {
-    PRODUCT_1 = 'PRODUCT_1',
-    PRODUCT_2 = 'PRODUCT_2',
-    PRODUCT_3 = 'PRODUCT_3',
-    PRODUCT_4 = 'PRODUCT_4'
+    LARGE_BEER = 'LARGE_BEER',
+    SMALL_BEER = 'SMALL_BEER'
 }
 
 export interface OrderItem {

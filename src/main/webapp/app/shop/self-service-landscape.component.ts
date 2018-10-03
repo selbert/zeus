@@ -16,11 +16,11 @@ const DEFAULT_DIALOG_TIMEOUT_SECONDS = 10;
 const DEFAULT_WEBSOCKET_RETRY_TIMEOUT = 5000;
 
 @Component({
-    selector: 'jhi-self-service',
-    templateUrl: './self-service.component.html',
-    styleUrls: ['self-service.component.scss']
+    selector: 'jhi-self-service-landscape',
+    templateUrl: './self-service-landscape.component.html',
+    styleUrls: ['self-service-landscape.component.scss']
 })
-export class SelfServiceComponent implements OnDestroy {
+export class SelfServiceLandscapeComponent implements OnDestroy {
     qrCodeSize = 250;
     error: string;
     orders: Invoice[];
@@ -78,7 +78,7 @@ export class SelfServiceComponent implements OnDestroy {
     }
 
     setupInvoices() {
-        this.orders = getSelfServiceOrders();
+        this.orders = getSelfServiceOrders(true);
         this.orders.forEach((order, index) => {
             order.memoPrefix = this.memoPrefix;
             this.checkoutService.createInvoice(order).subscribe((invoice: Invoice) => {

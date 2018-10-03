@@ -4,6 +4,7 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 import { JhiAdminComponent } from 'app/layouts';
 import { adminState } from 'app/admin';
 import { SelfServiceComponent } from 'app/shop/self-service.component';
+import { SelfServiceLandscapeComponent } from 'app/shop/self-service-landscape.component';
 
 @NgModule({
     imports: [
@@ -17,6 +18,15 @@ import { SelfServiceComponent } from 'app/shop/self-service.component';
                 {
                     path: 'self-service/:id',
                     component: SelfServiceComponent
+                },
+                {
+                    path: 'self-service-landscape',
+                    redirectTo: '/self-service-landscape/ln-pos',
+                    pathMatch: 'full'
+                },
+                {
+                    path: 'self-service-landscape/:id',
+                    component: SelfServiceLandscapeComponent
                 },
                 {
                     path: 'admin',
