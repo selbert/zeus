@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import static java.util.Arrays.asList;
 public class ShopService {
 
     private static final int DELAY_START = 15;
-    private static final LocalTime OPENING_HOUR = LocalTime.of(7, 30);
+    private static final LocalTime OPENING_HOUR = LocalTime.of(0, 0);
     private static final LocalTime CLOSING_HOUR = LocalTime.of(23, 59);
     private static final List<LocalDate> PUBLIC_HOLIDAYS = asList(
         of(1970, 1, 1),     // first of January
@@ -51,7 +52,7 @@ public class ShopService {
     }
 
     public boolean pickupDelayMinutesAfterOpening(int delayMinutes) {
-        return LocalTime.now().plusMinutes(delayMinutes).isAfter(CLOSING_HOUR);
+        return LocalDateTime.now().plusMinutes(delayMinutes).isAfter(CLOSING_HOUR.atDate(LocalDate.now()));
     }
 
     public List<Integer> getDelayMinutes() {
