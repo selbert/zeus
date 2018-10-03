@@ -92,7 +92,7 @@ export class SelfServiceComponent implements OnDestroy {
         const index = this.orders.indexOf(invoice);
         flash({
             element: $('#flash-receiver')[0],
-            colorFlash: '#6cb02c',
+            colorFlash: '#3b7bbe',
             zIndex: 9999,
             duration: SUCCESS_FLASH_DURATION
         });
