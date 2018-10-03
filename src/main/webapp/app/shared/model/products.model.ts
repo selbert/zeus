@@ -23,7 +23,7 @@ const LARGE_BEER: Product = {
 const SMALL_BEER: Product = {
     title: 'Small',
     type: OrderItemType.SMALL_BEER,
-    price: 2.0,
+    price: 1.0,
     options: ['"Coin Stout"', '"Thunderous Amber"'],
     cart: []
 };
