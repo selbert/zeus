@@ -74,7 +74,7 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
     }
 
     public GetInfoResponse getInfo() throws StatusException, ValidationException {
-        LOG.info("getInfo called");
+        LOG.debug("getInfo called");
         return syncApiReadOnly.getInfo();
     }
 
