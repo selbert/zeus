@@ -122,16 +122,18 @@
 }
 
 .one {
-    grid-column: col 1 / span 6;
+    grid-column: col 1 / span 8;
     grid-row: row 1 / span 8;
 }
 
 .two {
-    grid-column: col 14 / span 6;
+    grid-column: col 10/ span 8;
     grid-row: row 1 / span 8;
 }
 
 .box {
+    visibility: hidden;
+
     grid-column: col 5 / span 5;
     grid-row: row 2 / span 5;
     box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.5);
