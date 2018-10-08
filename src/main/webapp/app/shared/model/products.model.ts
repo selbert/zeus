@@ -88,11 +88,6 @@ export function getSelfServiceLandscapeItems() {
             itemType: OrderItemType.LARGE_BEER,
             count: 1,
             options: ['"Block Brew"']
-        },
-        {
-            itemType: OrderItemType.SMALL_BEER,
-            count: 1,
-            options: ['"Coin Stout"']
         }
     ];
 }
