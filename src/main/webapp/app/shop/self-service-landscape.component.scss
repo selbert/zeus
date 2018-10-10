@@ -116,6 +116,7 @@
 .two {
     grid-column: col 10/ span 8;
     grid-row: row 1 / span 8;
+    background-color: $qrcode-bg;
 }
 
 .box {
