@@ -23,8 +23,8 @@
                 [qrdata]="orders[0].paymentRequest"
                 [size]="qrCodeSize"
                 level="L"
-                [colordark]="#1e5a96"
-                [colorlight]="#eeeeee"
+                [colordark]="'#1e5a96'"
+                [colorlight]="'#eeeeee'"
                 [attr.title]="''">
         </qrcode>
         <div class="alert alert-danger" *ngIf="!orders[0].paymentRequest">
