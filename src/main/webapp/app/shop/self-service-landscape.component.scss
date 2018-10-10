@@ -77,27 +77,19 @@
         bottom: 0;
         left: 0;
 
-        &.product_1 {
+        &.large_beer {
             background-image: url(/content/images/product-1.jpg);
         }
 
-        &.product_2 {
+        &.small_beer {
             background-image: url(/content/images/product-2.jpg);
-        }
-
-        &.product_3 {
-            background-image: url(/content/images/product-3.jpg);
-        }
-
-        &.product_4 {
-            background-image: url(/content/images/product-4.jpg);
         }
     }
 
     .price {
         position: absolute;
         display: block;
-        background-color: $primary;
+        background-color: $price-color;
         border-radius: 50%;
         width: 120px;
         height: 120px;
