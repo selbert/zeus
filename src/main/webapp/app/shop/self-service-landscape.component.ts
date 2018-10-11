@@ -12,7 +12,7 @@ import { SUCCESS_FLASH_DURATION } from 'app/shop/checkout.component';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 const DEFAULT_COUNTDOWN_SECONDS = 300;
-const DEFAULT_DIALOG_TIMEOUT_SECONDS = 10;
+const DEFAULT_DIALOG_TIMEOUT_SECONDS = 6;
 const DEFAULT_WEBSOCKET_RETRY_TIMEOUT = 5000;
 
 @Component({
