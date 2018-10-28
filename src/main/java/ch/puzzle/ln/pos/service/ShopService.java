@@ -45,9 +45,6 @@ public class ShopService {
     }
 
     public boolean isOutsideOpeningHours() {
-        if (now().getDayOfWeek() == DayOfWeek.SUNDAY) {
-            return true;
-        }
         return LocalTime.now().isBefore(OPENING_HOUR) || LocalTime.now().isAfter(CLOSING_HOUR);
     }
 
