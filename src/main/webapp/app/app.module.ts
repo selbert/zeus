@@ -18,6 +18,7 @@ import { LnPosAdminModule } from 'app/admin/admin.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { ErrorComponent, FooterComponent, JhiAdminComponent, JhiShopComponent, NavbarComponent, PageRibbonComponent } from './layouts';
 import { AppComponent } from 'app/app.component';
+import { LnPosDonateModule } from 'app/donate/donate.module';
 
 @NgModule({
     imports: [
@@ -27,6 +28,7 @@ import { AppComponent } from 'app/app.component';
         LnPosSharedModule,
         LnPosCoreModule,
         LnPosShopModule,
+        LnPosDonateModule,
         LnPosAdminModule
         // jhipster-needle-angular-add-module JHipster will add new module here
     ],

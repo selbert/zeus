@@ -5,6 +5,7 @@ import { JhiAdminComponent } from 'app/layouts';
 import { adminState } from 'app/admin';
 import { SelfServiceComponent } from 'app/shop/self-service.component';
 import { SelfServiceLandscapeComponent } from 'app/shop/self-service-landscape.component';
+import { DonateComponent } from 'app/donate/donate.component';
 
 @NgModule({
     imports: [
@@ -27,6 +28,10 @@ import { SelfServiceLandscapeComponent } from 'app/shop/self-service-landscape.c
                 {
                     path: 'self-service-landscape/:id',
                     component: SelfServiceLandscapeComponent
+                },
+                {
+                    path: 'donate/:id',
+                    component: DonateComponent
                 },
                 {
                     path: 'admin',

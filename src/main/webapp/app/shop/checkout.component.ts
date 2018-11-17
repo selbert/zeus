@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { JhiEventManager } from 'ng-jhipster';
 import { flash } from 'light-it-up';
 import { Invoice } from 'app/shared/model/invoice.model';
@@ -25,7 +25,6 @@ export class JhiCheckoutModalComponent {
     constructor(
         private eventManager: JhiEventManager,
         private elementRef: ElementRef,
-        private renderer: Renderer,
         private checkoutService: CheckoutService,
         public activeModal: NgbActiveModal
     ) {

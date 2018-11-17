@@ -2,20 +2,20 @@ import { Injectable } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiCheckoutModalComponent } from 'app/shop/checkout.component';
 import { Invoice } from 'app/shared/model/invoice.model';
-import { CheckoutService } from 'app/shop/checkout.service';
+import { InvoiceService } from 'app/shared/service/invoice.service';
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutDialogService {
     private isOpen = false;
 
-    constructor(private modalService: NgbModal, private checkoutService: CheckoutService) {}
+    constructor(private modalService: NgbModal, private invoiceService: InvoiceService) {}
 
     openDialog(order: Invoice, paid = false, timeoutSeconds: number = null): NgbModalRef {
         if (this.isOpen) {
             return;
         }
         this.isOpen = true;
-        this.checkoutService.connect(() => null);
+        this.invoiceService.connect(() => null);
         const modalRef = this.modalService.open(JhiCheckoutModalComponent, { backdrop: 'static' });
         modalRef.componentInstance.order = order;
 
@@ -39,11 +39,11 @@ export class CheckoutDialogService {
         modalRef.result.then(
             result => {
                 this.isOpen = false;
-                this.checkoutService.disconnect();
+                this.invoiceService.disconnect();
             },
             reason => {
                 this.isOpen = false;
-                this.checkoutService.disconnect();
+                this.invoiceService.disconnect();
             }
         );
         return modalRef;

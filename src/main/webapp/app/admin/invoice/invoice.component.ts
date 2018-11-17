@@ -7,7 +7,7 @@ import * as $ from 'jquery';
 import 'tableexport';
 import { Invoice } from 'app/shared/model/invoice.model';
 import { Principal } from 'app/core';
-import { InvoiceService } from './invoice.service';
+import { InvoiceService } from 'app/shared/service/invoice.service';
 
 export const YEAR_MONTH = 'YYYYMM';
 

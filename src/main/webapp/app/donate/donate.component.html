@@ -1,0 +1,33 @@
+<div class="content-box">
+    <div class="row justify-content-center">
+        <div class="col-xs-10" *ngIf="!paid && !invoice">
+            <strong>Test your Lightning Network wallet by making a donation to
+                {{memoPrefix}}</strong><br />
+            <form class="form" role="form" (ngSubmit)="getInvoice()">
+                <div class="form-group">
+                    <label class="username-label" for="amount">Satoshis to
+                        donate:</label>
+                    <input type="number" class="form-control" name="amount"
+                           id="amount"
+                           [(ngModel)]="amount">
+                </div>
+                <button type="submit" class="btn btn-primary">Create invoice                </button>
+            </form>
+        </div>
+        <div class="col-xs-12" *ngIf="!paid && invoice">
+            <qrcode [qrdata]="invoice.paymentRequest"
+                    [size]="qrCodeSize"
+                    level="M"
+                    [colordark]="'#1e5a96'"
+                    [colorlight]="'#ffffff'"
+                    [attr.title]="''">
+            </qrcode>
+        </div>
+        <div class="col-xs-12" *ngIf="paid">
+            <div class="alert alert-success">
+                <strong>Thank you for your donation!</strong>
+            </div>
+            <button (click)="paid = false" class="btn btn-primary">Back</button>
+        </div>
+    </div>
+</div>

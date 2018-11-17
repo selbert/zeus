@@ -5,9 +5,9 @@ import { UserRouteAccessService } from 'app/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Invoice } from 'app/shared/model/invoice.model';
-import { InvoiceService } from './invoice.service';
 import { JhiInvoiceComponent } from './invoice.component';
 import { JhiInvoiceDetailComponent } from './invoice-detail.component';
+import { InvoiceService } from 'app/shared/service/invoice.service';
 
 @Injectable({ providedIn: 'root' })
 export class InvoiceResolve implements Resolve<Invoice> {

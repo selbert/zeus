@@ -7,6 +7,7 @@ import ch.puzzle.ln.pos.service.dto.InvoiceDTO;
 import ch.puzzle.ln.pos.web.rest.errors.BadRequestAlertException;
 import ch.puzzle.ln.pos.web.rest.errors.InternalServerErrorException;
 import ch.puzzle.ln.pos.web.rest.util.HeaderUtil;
+import ch.puzzle.ln.pos.web.rest.vm.DonationVM;
 import ch.puzzle.ln.pos.web.rest.vm.OrderVM;
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -37,10 +38,27 @@ public class InvoiceResource {
 
     @PostMapping("/invoice/new")
     @Timed
-    public ResponseEntity<InvoiceDTO> createInvoice(@Valid @RequestBody OrderVM order) throws URISyntaxException {
+    public ResponseEntity<InvoiceDTO> createInvoice(@Valid @RequestBody OrderVM order) {
         LOG.debug("REST request to save Order : {}", order);
         Invoice invoice = invoiceService.validateAndMapOrder(order);
         invoiceService.calculatePrice(invoice);
+        invoiceService.generateLndInvoice(invoice);
+        InvoiceDTO result = invoiceService.saveGenerated(invoice);
+
+        try {
+            return ResponseEntity.created(new URI("/api/invoices/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+                .body(result);
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
+
+    @PostMapping("/invoice/donation")
+    @Timed
+    public ResponseEntity<InvoiceDTO> createDonation(@Valid @RequestBody DonationVM donation) {
+        LOG.debug("REST request to save donation : {}", donation);
+        Invoice invoice = invoiceService.validateAndMapDonation(donation);
         invoiceService.generateLndInvoice(invoice);
         InvoiceDTO result = invoiceService.saveGenerated(invoice);
 
