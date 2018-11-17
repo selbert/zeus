@@ -1,5 +1,5 @@
 <div class="row justify-content-center">
-    <div class="col-8">
+    <div class="col-4">
         <div *ngIf="user">
             <h2>
                 <span>User</span> [<b>{{user.login}}</b>]
@@ -43,5 +43,31 @@
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
             </button>
         </div>
+    </div>
+    <div class="col-md-4">
+        <div class="alert alert-danger" *ngIf="passwordError">
+            <strong>{{passwordError}}</strong>
+        </div>
+        <div class="alert alert-success" *ngIf="passwordOk">
+            <strong>Password changed successfully.</strong>
+        </div>
+        <form class="form" role="form" (ngSubmit)="changePassword()">
+            <div class="form-group">
+                <label class="username-label" for="password">Current password</label>
+                <input type="password" class="form-control" name="oldPassword" id="oldPassword" placeholder="Current password"
+                       [(ngModel)]="oldPassword">
+            </div>
+            <div class="form-group">
+                <label class="username-label" for="password">New password</label>
+                <input type="password" class="form-control" name="password" id="password" placeholder="New password"
+                       [(ngModel)]="password">
+            </div>
+            <div class="form-group">
+                <label for="password">Repeat new password</label>
+                <input type="password" class="form-control" name="password2" id="password2" placeholder="Repeat new password"
+                       [(ngModel)]="password2">
+            </div>
+            <button type="submit" class="btn btn-primary">Set new password</button>
+        </form>
     </div>
 </div>
