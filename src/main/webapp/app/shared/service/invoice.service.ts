@@ -6,9 +6,9 @@ import { Observable, Observer, Subscription } from 'rxjs/index';
 import { WindowRef } from 'app/core/tracker/window.service';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'webstomp-client';
+import * as moment from 'moment';
 import { createRequestOption } from 'app/shared';
 import { map } from 'rxjs/operators';
-import moment = require('moment');
 
 type EntityResponseType = HttpResponse<Invoice>;
 type EntityArrayResponseType = HttpResponse<Invoice[]>;
