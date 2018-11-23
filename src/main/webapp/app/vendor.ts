@@ -1,96 +1,13 @@
 /* after changing this file run 'yarn run webpack:build' */
 /* tslint:disable */
 import '../content/scss/vendor.scss';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import {
-    faArrowLeft,
-    faAsterisk,
-    faBan,
-    faBars,
-    faBell,
-    faBook,
-    faCalendarAlt,
-    faCheck,
-    faCheckCircle,
-    faClock,
-    faCloud,
-    faDownload,
-    faEye,
-    faFlag,
-    faHdd,
-    faHeart,
-    faHome,
-    faInfoCircle,
-    faList,
-    faMobile,
-    faPencilAlt,
-    faPlus,
-    faQuestionCircle,
-    faRoad,
-    faSave,
-    faSearch,
-    faShoppingCart,
-    faSignInAlt,
-    faSignOutAlt,
-    faSort,
-    faSpinner,
-    faSync,
-    faTachometerAlt,
-    faTasks,
-    faThLarge,
-    faThList,
-    faTimes,
-    faTrashAlt,
-    faTv,
-    faUser,
-    faUserPlus,
-    faWrench
-} from '@fortawesome/free-solid-svg-icons';
+import { library, dom } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 
 // Imports all fontawesome core and solid icons
 
 // Adds the SVG icon to the library so you can use it in your page
-library.add(faUser);
-library.add(faSort);
-library.add(faSync);
-library.add(faEye);
-library.add(faBan);
-library.add(faTimes);
-library.add(faArrowLeft);
-library.add(faSave);
-library.add(faPlus);
-library.add(faPencilAlt);
-library.add(faBars);
-library.add(faHome);
-library.add(faThList);
-library.add(faUserPlus);
-library.add(faRoad);
-library.add(faTachometerAlt);
-library.add(faHeart);
-library.add(faList);
-library.add(faBell);
-library.add(faTasks);
-library.add(faBook);
-library.add(faHdd);
-library.add(faFlag);
-library.add(faWrench);
-library.add(faClock);
-library.add(faCloud);
-library.add(faSignOutAlt);
-library.add(faSignInAlt);
-library.add(faCalendarAlt);
-library.add(faSearch);
-library.add(faShoppingCart);
-library.add(faSpinner);
-library.add(faTrashAlt);
-library.add(faAsterisk);
-library.add(faCheckCircle);
-library.add(faCheck);
-library.add(faTv);
-library.add(faMobile);
-library.add(faThLarge);
-library.add(faQuestionCircle);
-library.add(faInfoCircle);
-library.add(faDownload);
+library.add(fas, fab);
 
 // jhipster-needle-add-element-to-vendor - JHipster will add new menu items here

@@ -1,20 +1,23 @@
-<div class="content-box">
+<div class="content-box" id="flash-receiver">
     <div class="row justify-content-center">
         <div class="col-xs-10" *ngIf="!paid && !invoice">
-            <strong>Test your Lightning Network wallet by making a donation to
-                {{memoPrefix}}</strong><br />
+            <strong>
+                Test your Lightning Network wallet by making a donation to
+                <em>&quot;{{memoPrefix}}&quot;</em>
+            </strong><br />
             <form class="form" role="form" (ngSubmit)="getInvoice()">
                 <div class="form-group">
-                    <label class="username-label" for="amount">Satoshis to
+                    <label class="username-label" for="amount">Satoshi(s) to
                         donate:</label>
                     <input type="number" class="form-control" name="amount"
                            id="amount"
                            [(ngModel)]="amount">
                 </div>
-                <button type="submit" class="btn btn-primary">Create invoice                </button>
+                <button type="submit" class="btn btn-primary">Create invoice
+                </button>
             </form>
         </div>
-        <div class="col-xs-12" *ngIf="!paid && invoice">
+        <div class="col-xs-12 justify-content-center" *ngIf="!paid && invoice">
             <qrcode [qrdata]="invoice.paymentRequest"
                     [size]="qrCodeSize"
                     level="M"
@@ -22,6 +25,7 @@
                     [colorlight]="'#ffffff'"
                     [attr.title]="''">
             </qrcode>
+            <strong>Scan this QR code to donate {{invoice.amount}} Satoshi(s).</strong>
         </div>
         <div class="col-xs-12" *ngIf="paid">
             <div class="alert alert-success">
@@ -30,4 +34,7 @@
             <button (click)="paid = false" class="btn btn-primary">Back</button>
         </div>
     </div>
+</div>
+<div class="sticky-footer">
+    <a href="https://github.com/puzzle/ln-self-order-pos"><fa-icon [icon]="['fab', 'github']"></fa-icon> fork me on GitHub.</a>
 </div>

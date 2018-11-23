@@ -3,5 +3,26 @@
         margin: 10px;
         width: calc(99% - 20px);
         background-color: rgba(255, 255, 255, 0.6);
+
+        /deep/ qrcode img {
+            margin: 0 auto;
+        }
+    }
+
+    .sticky-footer {
+        position: absolute;
+        bottom: 0;
+        right: 5px;
+        height: 26px;
+        font-size: 16px;
+        color: white;
+
+        a {
+            color: white;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 }

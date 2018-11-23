@@ -48,7 +48,9 @@ export class DonateComponent {
             zIndex: 9999,
             duration: SUCCESS_FLASH_DURATION
         });
-        this.paid = true;
-        this.invoice = null;
+        setTimeout(() => {
+            this.paid = true;
+            this.invoice = null;
+        }, SUCCESS_FLASH_DURATION);
     }
 }
