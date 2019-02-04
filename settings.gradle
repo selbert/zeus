@@ -1,1 +1,2 @@
-rootProject.name = 'ln-self-order-pos'
+rootProject.name = 'zeus-parent'
+include 'backend', 'frontend'

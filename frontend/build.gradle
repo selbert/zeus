@@ -1,0 +1,91 @@
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+apply plugin: 'com.moowork.node'
+
+defaultTasks 'war'
+
+group = 'ch.puzzle.ln.zeus.frontend'
+version = '0.0.1-SNAPSHOT'
+
+description = ''
+
+war {
+    webAppDirName = 'build/www/'
+    enabled = true
+    classifier = 'original'
+}
+
+test {
+    exclude '**/CucumberTest*'
+
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.enabled = false
+}
+
+def shouldWebpackRun() {
+    file('build/www/app/main.bundle.js').exists() == false || project.hasProperty('webpack')
+}
+
+if (project.hasProperty('prod')) {
+    apply from: '../gradle/profile_prod.gradle'
+    yarn_install {
+        args = ["--ignore-engines"]
+    }
+
+    task webpack_test(type: YarnTask, dependsOn: 'yarn_install') {
+        args = ["--ignore-engines", "run", "webpack:test"]
+    }
+
+    task webpack(type: YarnTask, dependsOn: 'yarn_install') {
+        args = ["--ignore-engines", "run", "webpack:prod"]
+    }
+
+    war {
+        webAppDirName = 'build/www/'
+    }
+
+    test.dependsOn webpack_test
+    processResources.dependsOn webpack
+
+} else {
+    apply from: '../gradle/profile_dev.gradle'
+
+    task webpackBuildDev(type: YarnTask, dependsOn: 'yarn_install') {
+        onlyIf { shouldWebpackRun() == true }
+        args = ["run", "webpack:build"]
+    }
+
+    war {
+        webAppDirName = 'src/'
+    }
+
+    processResources.dependsOn webpackBuildDev
+    yarn_install.onlyIf { shouldWebpackRun() == true }
+
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/tests")
+    reportOn test
+}
+
+task cleanResources(type: Delete) {
+    delete 'build/resources'
+}
+
+if (project.hasProperty('nodeInstall')) {
+    node {
+        version = "${node_version}"
+        npmVersion = "${npm_version}"
+        yarnVersion = "${yarn_version}"
+        download = true
+    }
+}
+
+compileJava.dependsOn processResources
+war.dependsOn yarn_build
+yarn_build.dependsOn(yarn_install)
