@@ -146,6 +146,7 @@ public class ApplicationProperties {
     public static class Bitcoin {
 
         private String tickerUrl;
+        private String tickerBackupUrl;
         private Integer connectTimeout;
         private Integer readTimeout;
         private String restUrl;
@@ -160,6 +161,18 @@ public class ApplicationProperties {
 
         public void setTickerUrl(String tickerUrl) {
             this.tickerUrl = tickerUrl;
+        }
+
+        public String getTickerBackupUrl() {
+            return tickerUrl;
+        }
+
+        public URI getTickerBackupUri() throws URISyntaxException {
+            return new URI(tickerBackupUrl);
+        }
+
+        public void setTickerBackupUrl(String tickerBackupUrl) {
+            this.tickerBackupUrl = tickerBackupUrl;
         }
 
         public Integer getConnectTimeout() {
@@ -303,6 +316,14 @@ public class ApplicationProperties {
 
         public List<Product> getProducts() {
             return products;
+        }
+
+        public Optional<Product> findProductByKey(String key) {
+            return products.stream().filter(product -> Objects.equals(product.getProductKey(), key)).findFirst();
+        }
+
+        public Product getProductByKey(String key) {
+            return findProductByKey(key).orElseThrow(RuntimeException::new);
         }
 
         public List<PickupLocation> getLocations() {

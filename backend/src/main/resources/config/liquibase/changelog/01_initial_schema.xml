@@ -210,4 +210,18 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="initial-schema-004" author="guggero">
+        <addColumn tableName="invoice">
+            <column name="pickup_location" type="varchar(255)" />
+            <column name="pickup_delay_minutes" type="int" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="initial-schema-005" author="guggero">
+        <addColumn tableName="invoice">
+            <column name="invoice_type" type="varchar(32)"/>
+        </addColumn>
+        <renameColumn tableName="order_item" oldColumnName="item_type" newColumnName="product_key"/>
+    </changeSet>
 </databaseChangeLog>

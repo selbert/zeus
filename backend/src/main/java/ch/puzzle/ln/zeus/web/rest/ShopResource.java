@@ -20,7 +20,7 @@ public class ShopResource {
 
     @GetMapping("/available")
     public HttpEntity<Object> shopAvailable() {
-        if (shopService.isDisabled() || shopService.isPublicHoliday() || shopService.isOutsideOpeningHours()) {
+        if (shopService.isClosed()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new HttpEntity<>(shopService.getDelayMinutes());

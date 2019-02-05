@@ -11,7 +11,7 @@ public class ShopServiceTest {
 	@Test
 	public void shouldGetDelayMinutes() {
 		// given
-		ShopService shopService = new ShopService(null);
+		ShopService shopService = new ShopService(null, null, null);
 		//when
 		List<Integer> delayMinutes = shopService.getDelayMinutes();
 		//then

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class DynamicConfigurationService {
 
     public static final String KEY_SHOP_ACTIVE = "shop.active";
+    public static final String KEY_SHOP_OVERRIDE = "shop.override";
 
     private final DynamicConfigurationRepository repository;
 

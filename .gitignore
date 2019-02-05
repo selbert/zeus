@@ -1,19 +1,21 @@
 ######################
 # Project Specific
 ######################
-/src/main/webapp/content/css/main.css
-/build/www/**
-/src/test/javascript/coverage/
+/frontend/src/content/css/main.css
+/frontend/build
+/frontend/test/javascript/coverage/
+/backend/build
+/backend/out
 
 ######################
 # Node
 ######################
-/node/
+/frontend/node/
 node_tmp/
 node_modules/
 npm-debug.log.*
-/.awcache/*
-/.cache-loader/*
+/frontend/.awcache/*
+/frontend/.cache-loader/*
 
 ######################
 # SASS

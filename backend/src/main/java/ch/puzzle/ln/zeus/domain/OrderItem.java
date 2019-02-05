@@ -1,6 +1,6 @@
 package ch.puzzle.ln.zeus.domain;
 
-import ch.puzzle.ln.zeus.domain.enums.OrderItemType;
+import ch.puzzle.ln.zeus.config.ApplicationProperties.Product;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,9 +27,8 @@ public class OrderItem implements Serializable {
     private Invoice invoice;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "item_type")
-    private OrderItemType itemType;
+    @Column(name = "product_key")
+    private String productKey;
 
     @NotNull
     @Column(name = "count")
@@ -40,7 +39,6 @@ public class OrderItem implements Serializable {
     private List<String> options = new ArrayList<>();
 
     public OrderItem() {
-
     }
 
     public static long getSerialVersionUID() {
@@ -71,12 +69,12 @@ public class OrderItem implements Serializable {
         this.count = count;
     }
 
-    public OrderItemType getItemType() {
-        return itemType;
+    public String getProductKey() {
+        return productKey;
     }
 
-    public void setItemType(OrderItemType itemType) {
-        this.itemType = itemType;
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
     }
 
     public List<String> getOptions() {
@@ -85,10 +83,6 @@ public class OrderItem implements Serializable {
 
     public void setOptions(List<String> options) {
         this.options = options;
-    }
-
-    public Double getTotal() {
-        return itemType.getPrice() * count.doubleValue();
     }
 
     @Override
@@ -102,11 +96,11 @@ public class OrderItem implements Serializable {
         OrderItem orderItem = (OrderItem) o;
         return Objects.equals(id, orderItem.id) &&
             Objects.equals(count, orderItem.count) &&
-            itemType == orderItem.itemType;
+            Objects.equals(productKey, orderItem.productKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, count, itemType);
+        return Objects.hash(id, count, productKey);
     }
 }

@@ -21,4 +21,10 @@
             insert into dynamic_configuration(key, value) values ('shop.active', 'true');
         </sql>
     </changeSet>
+
+    <changeSet id="testdata-003" author="guggero">
+        <sql>
+            insert into dynamic_configuration(key, value) values ('shop.override', 'false');
+        </sql>
+    </changeSet>
 </databaseChangeLog>

@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import static ch.puzzle.ln.zeus.service.BitcoinService.FIELD_BUY;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -39,30 +42,49 @@ public class BitcoinResource extends AbstractHealthIndicator {
 
     @GetMapping("/price/{ticker}")
     @Timed
-    public ResponseEntity<Object> getPrice(@PathVariable String ticker) throws Exception {
+    public ResponseEntity<Object> getPrice(@PathVariable String ticker) {
         LOG.debug("REST request to get bitcoin price in {}", ticker);
-        return ok(bitcoinService.pricePerBitcoinIn(ticker));
+        return ok(Collections.singletonMap(FIELD_BUY, bitcoinService.buyPricePerBitcoinIn(ticker)));
     }
 
+
+    @GetMapping("/prices/stale")
+    @Timed
+    public ResponseEntity<List<String>> getStalePrices() {
+        LOG.debug("REST request to get stale bitcoin prices");
+        return ok(bitcoinService.getStalePrices());
+    }
+
+
+    @GetMapping("/prices/age")
+    @Timed
+    public ResponseEntity<Map<String, Long>> getPricesAge() {
+        LOG.debug("REST request to get bitcoin prices age");
+        return ok(bitcoinService.getPricesAge());
+    }
+
+
     @Override
-    protected void doHealthCheck(Health.Builder builder) throws Exception {
+    protected void doHealthCheck(Health.Builder builder) {
         try {
             Map<String, Object> info = bitcoinService.chainInfo();
-            Object price = bitcoinService.pricePerBitcoinIn(applicationProperties.getCurrencyTicker());
+            Double price = bitcoinService.buyPricePerBitcoinIn(applicationProperties.getCurrencyTicker());
+            List<String> stalePrices = bitcoinService.getStalePrices();
+            Map<String, Long> pricesAges = bitcoinService.getPricesAge();
 
-            if (info == null || price == null) {
-                LOG.error("Error in health check for bitcoin, info or price is null! Info: {}, price: {}", info, price);
+            if (info == null || !stalePrices.isEmpty()) {
                 builder.down();
                 return;
             }
 
             builder
                 .withDetail("price", price)
+                .withDetail("stalePrices", stalePrices)
+                .withDetail("pricesAge", pricesAges)
                 .withDetail("blockHeight", info.get("blocks"))
                 .withDetail("blockHash", info.get("bestblockhash"))
                 .up();
         } catch (Exception e) {
-            LOG.error("Exception in health check for bitcoin!", e);
             builder.down(e);
         }
     }

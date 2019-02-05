@@ -1,7 +1,5 @@
 package ch.puzzle.ln.zeus.service.dto;
 
-import ch.puzzle.ln.zeus.domain.enums.OrderItemType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -9,10 +7,9 @@ import java.util.Objects;
 public class OrderItemDTO {
 
     private Long id;
-    private OrderItemType itemType;
+    private String productKey;
     private Integer count;
     private List<String> options = new ArrayList<>();
-    private Double total;
 
     public Long getId() {
         return id;
@@ -22,12 +19,12 @@ public class OrderItemDTO {
         this.id = id;
     }
 
-    public OrderItemType getItemType() {
-        return itemType;
+    public String getProductKey() {
+        return productKey;
     }
 
-    public void setItemType(OrderItemType itemType) {
-        this.itemType = itemType;
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
     }
 
     public Integer getCount() {
@@ -44,14 +41,6 @@ public class OrderItemDTO {
 
     public void setOptions(List<String> options) {
         this.options = options;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
     }
 
     @Override
@@ -79,10 +68,9 @@ public class OrderItemDTO {
     public String toString() {
         return "OrderItemDTO{" +
             "id=" + id +
-            ", itemType=" + itemType +
+            ", productKey=" + productKey +
             ", count=" + count +
             ", options=" + options +
-            ", total=" + total +
             '}';
     }
 }

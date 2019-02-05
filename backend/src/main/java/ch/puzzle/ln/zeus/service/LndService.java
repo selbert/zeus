@@ -22,106 +22,194 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ch.puzzle.ln.zeus.service.util.ConvertUtil.bytesToHex;
+import static ch.puzzle.ln.zeus.service.util.ConvertUtil.hexToBytes;
+
 @Component
 public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.message.Invoice> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LndService.class);
     private static final long CONNECTION_RETRY_TIMEOUT = 5000;
-    private static final int MAX_RETRIES = 5;
 
     private final ResourceLoader resourceLoader;
     private final ApplicationProperties applicationProperties;
-    private final AsynchronousLndAPI asyncApiInvoice;
-    private final SynchronousLndAPI syncApiReadOnly;
-    private final SynchronousLndAPI syncApiInvoice;
-    private final InvoiceSubscription invoiceSubscription;
     private final Set<InvoiceHandler> invoiceHandlers = new HashSet<>();
 
-    private int retries = 0;
+    private SynchronousLndAPI syncReadOnlyAPI;
+    private SynchronousLndAPI syncInvoiceAPI;
+    private AsynchronousLndAPI asyncAPI;
 
     public LndService(ResourceLoader resourceLoader, ApplicationProperties applicationProperties) throws Exception {
         this.resourceLoader = resourceLoader;
         this.applicationProperties = applicationProperties;
-        Lnd lnd = applicationProperties.getLnd();
-        asyncApiInvoice = new AsynchronousLndAPI(
-            lnd.getHost(),
-            lnd.getPort(),
-            getSslContext(),
-            lnd.getInvoiceMacaroonContext()
-        );
-        syncApiInvoice = new SynchronousLndAPI(
-            lnd.getHost(),
-            lnd.getPort(),
-            getSslContext(),
-            lnd.getInvoiceMacaroonContext()
-        );
-        syncApiReadOnly = new SynchronousLndAPI(
-            lnd.getHost(),
-            lnd.getPort(),
-            getSslContext(),
-            lnd.getReadonlyMacaroonContext()
-        );
-        invoiceSubscription = new InvoiceSubscription();
-        asyncApiInvoice.subscribeInvoices(invoiceSubscription, this);
+
+        subscribeToInvoices();
     }
 
-    public void addInvoiceHandler(InvoiceHandler handler) {
+    private void subscribeToInvoices() throws IOException, StatusException, ValidationException {
+        InvoiceSubscription invoiceSubscription = new InvoiceSubscription();
+        getAsyncApi().subscribeInvoices(invoiceSubscription, this);
+    }
+
+    private AsynchronousLndAPI getAsyncApi() throws IOException {
+        if (asyncAPI == null) {
+            Lnd lnd = applicationProperties.getLnd();
+            asyncAPI = new AsynchronousLndAPI(
+                lnd.getHost(),
+                lnd.getPort(),
+                getSslContext(),
+                lnd.getInvoiceMacaroonContext()
+            );
+        }
+        return asyncAPI;
+    }
+
+
+    private SynchronousLndAPI getSyncInvoiceApi() throws IOException {
+        if (syncInvoiceAPI == null) {
+            Lnd lnd = applicationProperties.getLnd();
+            syncInvoiceAPI = new SynchronousLndAPI(
+                lnd.getHost(),
+                lnd.getPort(),
+                getSslContext(),
+                lnd.getInvoiceMacaroonContext()
+            );
+        }
+        return syncInvoiceAPI;
+    }
+
+    private SynchronousLndAPI getSyncReadonlyApi() throws IOException {
+        if (syncReadOnlyAPI == null) {
+            Lnd lnd = applicationProperties.getLnd();
+            syncReadOnlyAPI = new SynchronousLndAPI(
+                lnd.getHost(),
+                lnd.getPort(),
+                getSslContext(),
+                lnd.getReadonlyMacaroonContext()
+            );
+        }
+        return syncReadOnlyAPI;
+    }
+
+    void addInvoiceHandler(InvoiceHandler handler) {
         invoiceHandlers.add(handler);
     }
 
-    public void removeInvoiceHandler(InvoiceHandler handler) {
-        invoiceHandlers.remove(handler);
+    public GetInfoResponse getInfo() throws IOException, StatusException, ValidationException {
+        LOG.info("getInfo called");
+        try {
+            return getSyncReadonlyApi().getInfo();
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("getInfo call failed, retrying with fresh api");
+            resetSyncReadOnlyApi();
+            return getSyncReadonlyApi().getInfo();
+        }
     }
 
-    public GetInfoResponse getInfo() throws StatusException, ValidationException {
-        LOG.debug("getInfo called");
-        return syncApiReadOnly.getInfo();
+    public ListChannelsResponse getChannels() throws IOException, StatusException, ValidationException {
+        LOG.info("getChannels called");
+        try {
+            return getSyncReadonlyApi().listChannels(true, false, true, false);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("getChannels call failed, retrying with fresh api");
+            resetSyncReadOnlyApi();
+            return getSyncReadonlyApi().listChannels(true, false, true, false);
+        }
     }
 
-    public ListChannelsResponse getChannels() throws StatusException, ValidationException {
-        LOG.debug("getChannels called");
-        return syncApiReadOnly.listChannels(true, false, true, false);
-    }
-
-    public NodeInfo getNodeInfo(String nodeId) throws StatusException, ValidationException {
+    public NodeInfo getNodeInfo(String nodeId) throws IOException, StatusException, ValidationException {
         LOG.info("getNodeInfo called with nodeId={}", nodeId);
-        return syncApiReadOnly.getNodeInfo(nodeId);
+        try {
+            return getSyncReadonlyApi().getNodeInfo(nodeId);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("getNodeInfo call failed, retrying with fresh api");
+            resetSyncReadOnlyApi();
+            return getSyncReadonlyApi().getNodeInfo(nodeId);
+        }
     }
 
-    public AddInvoiceResponse addInvoice(Invoice invoice) throws StatusException, ValidationException {
+    AddInvoiceResponse addInvoice(Invoice invoice) throws IOException, StatusException, ValidationException {
         LOG.info("addInvoice called with memo={}, amount={}", invoice.getMemo(), invoice.getValue());
-        return syncApiInvoice.addInvoice(invoice);
+        try {
+            return getSyncInvoiceApi().addInvoice(invoice);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("addInvoice call failed, retrying with fresh api");
+            resetSyncInvoiceApi();
+            return getSyncInvoiceApi().addInvoice(invoice);
+        }
     }
 
-    public Invoice lookupInvoice(String hashHex) throws StatusException, ValidationException {
+    Invoice lookupInvoice(String hashHex) throws IOException, StatusException, ValidationException {
         LOG.info("lookupInvoice called with {}", hashHex);
         PaymentHash paymentHash = new PaymentHash();
-        byte[] rHash = ConvertUtil.hexToBytes(hashHex);
+        byte[] rHash = hexToBytes(hashHex);
         paymentHash.setRHash(rHash);
-        return syncApiInvoice.lookupInvoice(paymentHash);
+        try {
+            return getSyncInvoiceApi().lookupInvoice(paymentHash);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("lookupInvoice call failed, retrying with fresh api");
+            resetSyncInvoiceApi();
+            return getSyncInvoiceApi().lookupInvoice(paymentHash);
+        }
+
     }
 
     @Override
     public void onNext(org.lightningj.lnd.wrapper.message.Invoice invoice) {
-        String invoiceHex = ConvertUtil.bytesToHex(invoice.getRHash());
+        String invoiceHex = bytesToHex(invoice.getRHash());
         LOG.info("Received update on subscription for {}.", invoiceHex);
         invoiceHandlers.forEach(h -> h.handleInvoiceUpdated(invoiceHex, invoice));
     }
 
     @Override
     public void onError(Throwable t) {
-        LOG.error("Subscription for listening to invoices failed! Trying again in 5 seconds", t);
+        LOG.error("Subscription for listening to invoices failed!", t);
         try {
-            Thread.sleep(CONNECTION_RETRY_TIMEOUT);
-            retries++;
-            asyncApiInvoice.subscribeInvoices(invoiceSubscription, this);
-            retries = 0;
-        } catch (InterruptedException e) {
-            LOG.error("Couldn't wait 5 seconds!", e);
-        } catch (StatusException | ValidationException e) {
-            LOG.error("Couldn't subscribe to invoices!", e);
-            if (retries < MAX_RETRIES) {
+            resetAsyncApi();
+            subscribeToInvoices();
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.error("Couldn't subscribe to invoices! sleeping for 5 seconds", e);
+            try {
+                Thread.sleep(CONNECTION_RETRY_TIMEOUT);
                 onError(e);
+            } catch (InterruptedException e1) {
+                LOG.error("woke up from sleep, exiting loop", e);
+            }
+        }
+    }
+
+    private void resetSyncReadOnlyApi() {
+        if (syncReadOnlyAPI != null) {
+            try {
+                syncReadOnlyAPI.close();
+            } catch (StatusException e) {
+                LOG.error("Couldn't close sync readonly api", e);
+            } finally {
+                syncReadOnlyAPI = null;
+            }
+        }
+    }
+
+    private void resetSyncInvoiceApi() {
+        if (syncInvoiceAPI != null) {
+            try {
+                syncInvoiceAPI.close();
+            } catch (StatusException e) {
+                LOG.error("Couldn't close sync invoice api", e);
+            } finally {
+                syncInvoiceAPI = null;
+            }
+        }
+    }
+
+    private void resetAsyncApi() {
+        if (asyncAPI != null) {
+            try {
+                asyncAPI.close();
+            } catch (StatusException e) {
+                LOG.error("Couldn't close async api", e);
+            } finally {
+                asyncAPI = null;
             }
         }
     }

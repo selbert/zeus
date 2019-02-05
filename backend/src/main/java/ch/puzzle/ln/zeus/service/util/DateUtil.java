@@ -39,8 +39,8 @@ public class DateUtil {
         return getEasterSunday(year).plusDays(50);
     }
 
-    public static boolean isTodayIgnoreYear(LocalDate a) {
-        return equalIgnoreYear(now(), a);
+    public static boolean areLocalDatesSameDayAndMonth(LocalDate first, LocalDate second) {
+        return equalIgnoreYear(first, second);
     }
 
     public static boolean equalIgnoreYear(LocalDate a, LocalDate b) {

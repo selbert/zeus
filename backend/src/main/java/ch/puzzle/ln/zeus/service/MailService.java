@@ -2,6 +2,7 @@ package ch.puzzle.ln.zeus.service;
 
 import ch.puzzle.ln.zeus.config.ApplicationProperties;
 import ch.puzzle.ln.zeus.config.ApplicationProperties.Mail;
+import ch.puzzle.ln.zeus.config.ApplicationProperties.Shop;
 import ch.puzzle.ln.zeus.service.dto.InvoiceDTO;
 import ch.puzzle.ln.zeus.service.util.ConvertUtil;
 import io.github.jhipster.config.JHipsterProperties;
@@ -17,9 +18,12 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ch.puzzle.ln.zeus.service.util.ConvertUtil.formatTime;
 import static java.util.Arrays.asList;
 import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED;
 
@@ -93,10 +97,12 @@ public class MailService {
     @Async
     public void sendOrderConfirmation(InvoiceDTO invoice) {
         Mail mail = applicationProperties.getMail();
+        Shop shop = applicationProperties.getShop();
         LOG.debug("Sending order confirmation email to '{}'", mail.getRecipient());
         String subject = mail.getSubject() + invoice.getReferenceIdShort();
         Double taxMultiplier = applicationProperties.getTaxMultiplier();
         String ticker = applicationProperties.getCurrencyTicker();
+        Double totalChf = InvoiceService.calculateTotalChf(invoice, shop);
 
         Map<String, Object> data = new HashMap<>();
 
@@ -105,18 +111,28 @@ public class MailService {
                 .stream()
                 .map(o -> asList(
                     "left",
-                    i.getItemType().name() + " " + o,
+                    shop.getProductByKey(i.getProductKey()).getTitle() + " " + o,
                     "right",
-                    ConvertUtil.formatCurrency(ticker, i.getItemType().getPrice())
+                    ConvertUtil.formatCurrency(ticker, shop.getProductByKey(i.getProductKey()).getPrice())
                 ))
             ).collect(Collectors.toList());
         data.put("options", options);
         data.put("title", subject);
         data.put("invoice", invoice);
         data.put("taxBase", ConvertUtil.formatNumber(taxMultiplier * 100, 1));
-        data.put("taxAmount", ConvertUtil.formatCurrency(ticker, invoice.getTotal() * taxMultiplier));
-        data.put("total", ConvertUtil.formatCurrency(ticker, invoice.getTotal()));
+        data.put("taxAmount", ConvertUtil.formatCurrency(ticker, totalChf * taxMultiplier));
+        data.put("total", ConvertUtil.formatCurrency(ticker, totalChf));
         data.put("paymentText", mail.getPaymentText());
+        if (invoice.getPickupDelayMinutes() == 0) {
+            data.put("pickup", "NOW! (" + formatTime(invoice.getSettleDate()) + ")");
+        } else if (invoice.getPickupDelayMinutes() != null) {
+            Instant pickupTime = invoice.getSettleDate()
+                .plus(invoice.getPickupDelayMinutes(), ChronoUnit.MINUTES);
+            data.put("pickup", "Later: " + formatTime(pickupTime));
+        }
+        if (invoice.getPickupLocation() != null) {
+            data.put("pickupLocation", invoice.getPickupLocation());
+        }
 
         sendEmailFromTemplate(data, "mail/orderConfirmation", subject);
     }
