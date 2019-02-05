@@ -308,10 +308,14 @@ public class ApplicationProperties {
         private Map<DayOfWeek, Optional<DailyOpeningHours>> openingHours = OpeningHours.get_Map_24_7();
         private List<Product> products = new ArrayList<>();
         private List<PickupLocation> locations = new ArrayList<>();
-        private boolean allowPickupDelay;
+        private boolean allowPickupDelay = false;
 
         public Map<DayOfWeek, Optional<DailyOpeningHours>> getWeeklyOpeningHours() {
             return openingHours;
+        }
+
+        public void setOpeningHours(OpeningHours openingHours) {
+            this.openingHours = openingHours.getMap();
         }
 
         public List<Product> getProducts() {

@@ -28,11 +28,9 @@ public class OpeningHoursService {
     }
 
     public boolean isOpenAt(LocalDateTime dateDateTime) {
-        boolean isOpen = getOpeningHours(dateDateTime)
+        return getOpeningHours(dateDateTime)
             .filter(openingHours -> dateDateTime.toLocalTime().isAfter(openingHours.getOpeningHour()))
             .filter(openingHours -> dateDateTime.toLocalTime().isBefore(openingHours.getClosingHour()))
             .isPresent();
-
-        return isOpen;
     }
 }

@@ -1,7 +1,5 @@
 package ch.puzzle.ln.zeus.domain;
 
-import ch.puzzle.ln.zeus.config.ApplicationProperties.Product;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

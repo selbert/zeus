@@ -222,6 +222,14 @@
         <addColumn tableName="invoice">
             <column name="invoice_type" type="varchar(32)"/>
         </addColumn>
+        <sql>
+            update invoice set invoice_type = 'SELF_ORDER' where auto_generated = true;
+            update invoice set invoice_type = 'WEB_SHOP' where auto_generated = false and amount_chf > 0;
+            update invoice set invoice_type = 'DONATION' where auto_generated = false and amount_chf = 0;
+        </sql>
+        <dropColumn tableName="invoice">
+            <column name="auto_generated"/>
+        </dropColumn>
         <renameColumn tableName="order_item" oldColumnName="item_type" newColumnName="product_key"/>
     </changeSet>
 </databaseChangeLog>

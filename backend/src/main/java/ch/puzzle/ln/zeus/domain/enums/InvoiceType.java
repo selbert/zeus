@@ -1,7 +1,7 @@
 package ch.puzzle.ln.zeus.domain.enums;
 
 public enum InvoiceType {
-    PRODUCT,
-    TIP,
+    SELF_ORDER,
+    WEB_SHOP,
     DONATION;
 }
