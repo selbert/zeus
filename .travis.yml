@@ -30,10 +30,10 @@ script: ./gradlew -Pprod clean bootWar
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      cp build/libs/ln*.war src/main/docker;
+      cp backend/build/libs/ln*.war backend/src/main/docker;
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-      docker build -t "guggero/ln-self-order-zeus:latest" src/main/docker/;
-      docker build -t "guggero/ln-self-order-zeus:$TRAVIS_BUILD_NUMBER" src/main/docker/;
-      docker push "guggero/ln-self-order-zeus:latest";
-      docker push "guggero/ln-self-order-zeus:$TRAVIS_BUILD_NUMBER";
+      docker build -t "guggero/zeus-backend:latest" backend/src/main/docker/;
+      docker build -t "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER" backend/src/main/docker/;
+      docker push "guggero/zeus-backend:latest";
+      docker push "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER";
     fi
