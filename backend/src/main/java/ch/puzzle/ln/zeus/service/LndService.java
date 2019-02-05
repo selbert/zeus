@@ -1,0 +1,228 @@
+package ch.puzzle.ln.zeus.service;
+
+import ch.puzzle.ln.zeus.config.ApplicationProperties;
+import ch.puzzle.ln.zeus.config.ApplicationProperties.Lnd;
+import ch.puzzle.ln.zeus.service.util.ConvertUtil;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.stub.StreamObserver;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
+import org.lightningj.lnd.wrapper.AsynchronousLndAPI;
+import org.lightningj.lnd.wrapper.StatusException;
+import org.lightningj.lnd.wrapper.SynchronousLndAPI;
+import org.lightningj.lnd.wrapper.ValidationException;
+import org.lightningj.lnd.wrapper.message.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import static ch.puzzle.ln.zeus.service.util.ConvertUtil.bytesToHex;
+import static ch.puzzle.ln.zeus.service.util.ConvertUtil.hexToBytes;
+
+@Component
+public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.message.Invoice> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LndService.class);
+    private static final long CONNECTION_RETRY_TIMEOUT = 5000;
+
+    private final ResourceLoader resourceLoader;
+    private final ApplicationProperties applicationProperties;
+    private final Set<InvoiceHandler> invoiceHandlers = new HashSet<>();
+
+    private SynchronousLndAPI syncReadOnlyAPI;
+    private SynchronousLndAPI syncInvoiceAPI;
+    private AsynchronousLndAPI asyncAPI;
+
+    public LndService(ResourceLoader resourceLoader, ApplicationProperties applicationProperties) throws Exception {
+        this.resourceLoader = resourceLoader;
+        this.applicationProperties = applicationProperties;
+
+        subscribeToInvoices();
+    }
+
+    private void subscribeToInvoices() throws IOException, StatusException, ValidationException {
+        InvoiceSubscription invoiceSubscription = new InvoiceSubscription();
+        getAsyncApi().subscribeInvoices(invoiceSubscription, this);
+    }
+
+    private AsynchronousLndAPI getAsyncApi() throws IOException {
+        if (asyncAPI == null) {
+            Lnd lnd = applicationProperties.getLnd();
+            asyncAPI = new AsynchronousLndAPI(
+                lnd.getHost(),
+                lnd.getPort(),
+                getSslContext(),
+                lnd.getInvoiceMacaroonContext()
+            );
+        }
+        return asyncAPI;
+    }
+
+
+    private SynchronousLndAPI getSyncInvoiceApi() throws IOException {
+        if (syncInvoiceAPI == null) {
+            Lnd lnd = applicationProperties.getLnd();
+            syncInvoiceAPI = new SynchronousLndAPI(
+                lnd.getHost(),
+                lnd.getPort(),
+                getSslContext(),
+                lnd.getInvoiceMacaroonContext()
+            );
+        }
+        return syncInvoiceAPI;
+    }
+
+    private SynchronousLndAPI getSyncReadonlyApi() throws IOException {
+        if (syncReadOnlyAPI == null) {
+            Lnd lnd = applicationProperties.getLnd();
+            syncReadOnlyAPI = new SynchronousLndAPI(
+                lnd.getHost(),
+                lnd.getPort(),
+                getSslContext(),
+                lnd.getReadonlyMacaroonContext()
+            );
+        }
+        return syncReadOnlyAPI;
+    }
+
+    void addInvoiceHandler(InvoiceHandler handler) {
+        invoiceHandlers.add(handler);
+    }
+
+    public GetInfoResponse getInfo() throws IOException, StatusException, ValidationException {
+        LOG.info("getInfo called");
+        try {
+            return getSyncReadonlyApi().getInfo();
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("getInfo call failed, retrying with fresh api");
+            resetSyncReadOnlyApi();
+            return getSyncReadonlyApi().getInfo();
+        }
+    }
+
+    public ListChannelsResponse getChannels() throws IOException, StatusException, ValidationException {
+        LOG.info("getChannels called");
+        try {
+            return getSyncReadonlyApi().listChannels(true, false, true, false);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("getChannels call failed, retrying with fresh api");
+            resetSyncReadOnlyApi();
+            return getSyncReadonlyApi().listChannels(true, false, true, false);
+        }
+    }
+
+    public NodeInfo getNodeInfo(String nodeId) throws IOException, StatusException, ValidationException {
+        LOG.info("getNodeInfo called with nodeId={}", nodeId);
+        try {
+            return getSyncReadonlyApi().getNodeInfo(nodeId);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("getNodeInfo call failed, retrying with fresh api");
+            resetSyncReadOnlyApi();
+            return getSyncReadonlyApi().getNodeInfo(nodeId);
+        }
+    }
+
+    AddInvoiceResponse addInvoice(Invoice invoice) throws IOException, StatusException, ValidationException {
+        LOG.info("addInvoice called with memo={}, amount={}", invoice.getMemo(), invoice.getValue());
+        try {
+            return getSyncInvoiceApi().addInvoice(invoice);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("addInvoice call failed, retrying with fresh api");
+            resetSyncInvoiceApi();
+            return getSyncInvoiceApi().addInvoice(invoice);
+        }
+    }
+
+    Invoice lookupInvoice(String hashHex) throws IOException, StatusException, ValidationException {
+        LOG.info("lookupInvoice called with {}", hashHex);
+        PaymentHash paymentHash = new PaymentHash();
+        byte[] rHash = hexToBytes(hashHex);
+        paymentHash.setRHash(rHash);
+        try {
+            return getSyncInvoiceApi().lookupInvoice(paymentHash);
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.warn("lookupInvoice call failed, retrying with fresh api");
+            resetSyncInvoiceApi();
+            return getSyncInvoiceApi().lookupInvoice(paymentHash);
+        }
+
+    }
+
+    @Override
+    public void onNext(org.lightningj.lnd.wrapper.message.Invoice invoice) {
+        String invoiceHex = bytesToHex(invoice.getRHash());
+        LOG.info("Received update on subscription for {}.", invoiceHex);
+        invoiceHandlers.forEach(h -> h.handleInvoiceUpdated(invoiceHex, invoice));
+    }
+
+    @Override
+    public void onError(Throwable t) {
+        LOG.error("Subscription for listening to invoices failed!", t);
+        try {
+            resetAsyncApi();
+            subscribeToInvoices();
+        } catch (StatusException | ValidationException | IOException e) {
+            LOG.error("Couldn't subscribe to invoices! sleeping for 5 seconds", e);
+            try {
+                Thread.sleep(CONNECTION_RETRY_TIMEOUT);
+                onError(e);
+            } catch (InterruptedException e1) {
+                LOG.error("woke up from sleep, exiting loop", e);
+            }
+        }
+    }
+
+    private void resetSyncReadOnlyApi() {
+        if (syncReadOnlyAPI != null) {
+            try {
+                syncReadOnlyAPI.close();
+            } catch (StatusException e) {
+                LOG.error("Couldn't close sync readonly api", e);
+            } finally {
+                syncReadOnlyAPI = null;
+            }
+        }
+    }
+
+    private void resetSyncInvoiceApi() {
+        if (syncInvoiceAPI != null) {
+            try {
+                syncInvoiceAPI.close();
+            } catch (StatusException e) {
+                LOG.error("Couldn't close sync invoice api", e);
+            } finally {
+                syncInvoiceAPI = null;
+            }
+        }
+    }
+
+    private void resetAsyncApi() {
+        if (asyncAPI != null) {
+            try {
+                asyncAPI.close();
+            } catch (StatusException e) {
+                LOG.error("Couldn't close async api", e);
+            } finally {
+                asyncAPI = null;
+            }
+        }
+    }
+
+    @Override
+    public void onCompleted() {
+        LOG.info("Subscription for listening to invoices completed.");
+    }
+
+    private SslContext getSslContext() throws IOException {
+        return GrpcSslContexts
+            .configure(SslContextBuilder.forClient(), SslProvider.OPENSSL)
+            .trustManager(resourceLoader.getResource(applicationProperties.getLnd().getCertPath()).getInputStream())
+            .build();
+    }
+}

@@ -1,4 +1,6 @@
-# ln-self-order-pos
+# zeus
+
+Zeus is a Lightning Network Point of Sale application for LND, written in Java.
 
 ![screenshot](doc/screenshot.png)
 
@@ -13,7 +15,7 @@ self-order point of sale screen.
 [You can see a demo video of our version here.](https://twitter.com/gugol/status/1042658297927675905)
 
 The following chapters will guide you through the steps that are necessary to
-customize the generic `lnPos` to your needs.
+customize the generic `Zeus` to your needs.
 
 ### Set up your own LND node
 
@@ -58,7 +60,7 @@ Here is an example `application-dev.yml`:
 logging:
     level:
         io.github.jhipster: DEBUG
-        ch.puzzle.ln.pos: DEBUG
+        ch.puzzle.ln.zeus: DEBUG
 
 spring:
     profiles:
@@ -74,9 +76,9 @@ spring:
     datasource:
         # See section 'Use persistent development DB' in the README to set this up
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:postgresql://localhost:5441/ln_self_order_pos
-        username: ln_self_order_pos
-        password: ln_self_order_pos
+        url: jdbc:postgresql://localhost:5441/zeus
+        username: zeus
+        password: zeus
     jpa:
         database-platform: io.github.jhipster.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL
@@ -151,15 +153,15 @@ updated. Usually, this means it has been paid/settled. You can write your
 own invoice processor by implementing `ApplicationListener<InvoiceEvent>` in 
 your service.
 
-There is an example `ch.puzzle.ln.pos.service.processors.MailSendOrderProcessor`
+There is an example `ch.puzzle.ln.zeus.service.processors.MailSendOrderProcessor`
 service that sends out an e-mail whenever an invoice has been paid:
 
 ```java
-package ch.puzzle.ln.pos.service.processors;
+package ch.puzzle.ln.zeus.service.processors;
 
-import ch.puzzle.ln.pos.service.InvoiceEvent;
-import ch.puzzle.ln.pos.service.MailService;
-import ch.puzzle.ln.pos.service.dto.InvoiceDTO;
+import ch.puzzle.ln.zeus.service.InvoiceEvent;
+import ch.puzzle.ln.zeus.service.MailService;
+import ch.puzzle.ln.zeus.service.dto.InvoiceDTO;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
@@ -194,9 +196,7 @@ There is a simple generic example self-order store implemented in the web GUI.
 
 To change the products and their price, make sure to edit the following files:
 
-* `src/main/java/ch/puzzle/ln/pos/domain/enums/OrderItemType.java`
-* `src/main/webapp/app/shared/model/invoice.model.ts`
-* `src/main/webapp/app/shared/model/product.model.ts`
+* TODO: config file
 
 To change the way the self-order store looks, edit the following files:
 
@@ -220,11 +220,11 @@ your invoices and a page that displays the status of your LND node.
 ```bash
 docker run \
   -d \
-  -e POSTGRESQL_USER=ln_self_order_pos \
-  -e POSTGRESQL_PASSWORD=ln_self_order_pos \
-  -e POSTGRESQL_DATABASE=ln_self_order_pos \
+  -e POSTGRESQL_USER=zeus \
+  -e POSTGRESQL_PASSWORD=zeus \
+  -e POSTGRESQL_DATABASE=zeus \
   -p 5441:5432 \
-  --name ln-self-order-pos-db \
+  --name zeus-db \
   --restart unless-stopped \
   centos/postgresql-96-centos7
 

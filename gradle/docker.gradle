@@ -25,5 +25,5 @@ task buildDocker(type: DockerBuildImage, dependsOn: 'copyDockerFiles') {
     description = "Package application as Docker image"
     group = "Docker"
     inputDir = project.file("${project.buildDir}/docker")
-    tags = ["ln-self-order-pos:latest".toString(), "ln-self-order-pos:${project.version}".toString()]
+    tags = ["zeus:latest".toString(), "zeus:${project.version}".toString()]
 }
