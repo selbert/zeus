@@ -1,10 +1,16 @@
 package ch.puzzle.ln.zeus.config;
 
+import ch.puzzle.ln.zeus.domain.DailyOpeningHours;
 import org.lightningj.lnd.wrapper.MacaroonContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.*;
 
 /**
  * Properties specific to Zeus.
@@ -15,6 +21,8 @@ import java.net.URISyntaxException;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationProperties.class);
+
     private String memoPrefix;
     private String currencyTicker;
     private Double taxMultiplier;
@@ -23,6 +31,7 @@ public class ApplicationProperties {
     private Bitcoin bitcoin = new Bitcoin();
     private Mail mail = new Mail();
     private Twitter twitter = new Twitter();
+    private Shop shop = new Shop();
 
     public String getMemoPrefix() {
         return memoPrefix;
@@ -62,6 +71,10 @@ public class ApplicationProperties {
 
     public Twitter getTwitter() {
         return twitter;
+    }
+
+    public Shop getShop() {
+        return shop;
     }
 
     public static class Lnd {
@@ -273,6 +286,188 @@ public class ApplicationProperties {
 
         public void setAccessTokenSecret(String accessTokenSecret) {
             this.accessTokenSecret = accessTokenSecret;
+        }
+    }
+
+    public static class Shop {
+
+        // if there are no opening hours set, open the shop always (run it as a 24/7 shop)
+        private Map<DayOfWeek, Optional<DailyOpeningHours>> openingHours = OpeningHours.get_Map_24_7();
+        private List<Product> products = new ArrayList<>();
+        private List<PickupLocation> locations = new ArrayList<>();
+        private boolean allowPickupDelay;
+
+        public Map<DayOfWeek, Optional<DailyOpeningHours>> getWeeklyOpeningHours() {
+            return openingHours;
+        }
+
+        public List<Product> getProducts() {
+            return products;
+        }
+
+        public List<PickupLocation> getLocations() {
+            return locations;
+        }
+
+        public boolean isAllowPickupDelay() {
+            return allowPickupDelay;
+        }
+
+        public void setAllowPickupDelay(boolean allowPickupDelay) {
+            this.allowPickupDelay = allowPickupDelay;
+        }
+    }
+
+    public static class OpeningHours {
+
+        private WeekDay monday = new WeekDay();
+        private WeekDay tuesday = new WeekDay();
+        private WeekDay wednesday = new WeekDay();
+        private WeekDay thursday = new WeekDay();
+        private WeekDay friday = new WeekDay();
+        private WeekDay saturday = new WeekDay();
+        private WeekDay sunday = new WeekDay();
+
+        // statically return opening hours for a shop that is always open (24/7)
+        public static Map<DayOfWeek, Optional<DailyOpeningHours>> get_Map_24_7() {
+            Map<DayOfWeek, Optional<DailyOpeningHours>> weekdays = new HashMap<>();
+
+            Arrays.stream(DayOfWeek.values())
+                .forEach(
+                    day -> weekdays.put(day, Optional.of(getAllDayOpeningHours()))
+                );
+
+            return weekdays;
+        }
+
+        private static DailyOpeningHours getAllDayOpeningHours() {
+            return new DailyOpeningHours(LocalTime.MIN, LocalTime.MAX);
+        }
+
+        public Map<DayOfWeek, Optional<DailyOpeningHours>> getMap() {
+            Map<DayOfWeek, Optional<DailyOpeningHours>> weekdays = new HashMap<>();
+
+            weekdays.put(DayOfWeek.MONDAY, monday.getOpeningHours());
+            weekdays.put(DayOfWeek.TUESDAY, tuesday.getOpeningHours());
+            weekdays.put(DayOfWeek.WEDNESDAY, wednesday.getOpeningHours());
+            weekdays.put(DayOfWeek.THURSDAY, thursday.getOpeningHours());
+            weekdays.put(DayOfWeek.FRIDAY, friday.getOpeningHours());
+            weekdays.put(DayOfWeek.SATURDAY, saturday.getOpeningHours());
+            weekdays.put(DayOfWeek.SUNDAY, sunday.getOpeningHours());
+
+            return weekdays;
+        }
+
+        public void setMonday(WeekDay monday) {
+            this.monday = monday;
+        }
+
+        public void setTuesday(WeekDay tuesday) {
+            this.tuesday = tuesday;
+        }
+
+        public void setWednesday(WeekDay wednesday) {
+            this.wednesday = wednesday;
+        }
+
+        public void setThursday(WeekDay thursday) {
+            this.thursday = thursday;
+        }
+
+        public void setFriday(WeekDay friday) {
+            this.friday = friday;
+        }
+
+        public void setSaturday(WeekDay saturday) {
+            this.saturday = saturday;
+        }
+
+        public void setSunday(WeekDay sunday) {
+            this.sunday = sunday;
+        }
+    }
+
+    public static class WeekDay {
+
+        private LocalTime open = null;
+        private LocalTime close = null;
+
+        public Optional<DailyOpeningHours> getOpeningHours() {
+            if (open == null ^ close == null) {
+                LOGGER.warn("The opening hours settings demand the usage of both the *open* and *close* value per day. Alternatively you may remove these settings from the config.");
+            }
+            if (open == null || close == null) {
+                // If opening hours are not set, return the openingHours as *closed all day*
+                return Optional.empty();
+            } else {
+                return Optional.of(new DailyOpeningHours(open, close));
+            }
+        }
+
+        public void setOpen(String open) {
+            this.open = LocalTime.parse(open);
+        }
+
+        public void setClose(String close) {
+            this.close = LocalTime.parse(close);
+        }
+    }
+
+    public static class Product {
+
+        private String title;
+        private String productKey;
+        private Double price;
+        private List<String> options = new ArrayList<>();
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getProductKey() {
+            return productKey;
+        }
+
+        public void setProductKey(String productKey) {
+            this.productKey = productKey;
+        }
+
+        public Double getPrice() {
+            return price;
+        }
+
+        public void setPrice(Double price) {
+            this.price = price;
+        }
+
+        public List<String> getOptions() {
+            return options;
+        }
+    }
+
+    private static class PickupLocation {
+
+        private String name;
+        private String key;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
         }
     }
 }
