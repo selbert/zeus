@@ -24,7 +24,7 @@
     },
     "include": [
         "src/app",
-        "test/javascript/"
+        "test/"
     ],
     "exclude": [
         "node_modules"

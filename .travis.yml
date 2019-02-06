@@ -26,14 +26,18 @@ before_install:
   - jdk_switcher use oraclejdk8
   - java -version
   - export TZ=Europe/Zurich
-script: ./gradlew -Pprod clean bootWar
+script: ./gradlew -Pprod clean build
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      cp backend/build/libs/*.war backend/src/main/docker;
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-      docker build -t "guggero/zeus-backend:latest" backend/src/main/docker/;
-      docker build -t "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER" backend/src/main/docker/;
+      cp backend/build/libs/*.war backend/src/main/docker;
+      docker build -t "guggero/zeus-backend:latest" -t "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER" backend/src/main/docker/;
       docker push "guggero/zeus-backend:latest";
       docker push "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER";
+
+      cp frontend/docker/* frontend/build/www;
+      docker build -t "guggero/zeus-frontend:latest" -t "guggero/zeus-frontend:$TRAVIS_BUILD_NUMBER" frontend/build/www/;
+      docker push "guggero/zeus-frontend:latest";
+      docker push "guggero/zeus-frontend:$TRAVIS_BUILD_NUMBER";
     fi

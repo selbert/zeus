@@ -1,6 +1,6 @@
 module.exports = {
     preset: 'jest-preset-angular',
-    setupTestFrameworkScriptFile: '<rootDir>/src/test/javascript/jest.ts',
+    setupTestFrameworkScriptFile: '<rootDir>/test/jest.ts',
     coverageDirectory: '<rootDir>/build/test-results/',
     globals: {
         'ts-jest': {
@@ -9,7 +9,7 @@ module.exports = {
         __TRANSFORM_HTML__: true
     },
     moduleNameMapper: {
-        'app/(.*)': '<rootDir>/src/main/webapp/app/$1'
+        'app/(.*)': '<rootDir>/src/app/$1'
     },
     reporters: [
         'default',
@@ -17,7 +17,7 @@ module.exports = {
     ],
     testResultsProcessor: 'jest-sonar-reporter',
     transformIgnorePatterns: ['node_modules/(?!@angular/common/locales)'],
-    testMatch: ['<rootDir>/src/test/javascript/spec/**/+(*.)+(spec.ts)'],
-    rootDir: '../../../',
+    testMatch: ['<rootDir>/test/spec/**/+(*.)+(spec.ts)'],
+    rootDir: '../',
     testURL: "http://localhost/"
 };
