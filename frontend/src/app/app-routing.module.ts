@@ -13,7 +13,12 @@ import { DonateComponent } from 'app/donate/donate.component';
             [
                 {
                     path: '',
-                    redirectTo: '/self-service/ln-zeus',
+                    redirectTo: '/self-service/zeus',
+                    pathMatch: 'full'
+                },
+                {
+                    path: 'self-service',
+                    redirectTo: '/self-service/zeus',
                     pathMatch: 'full'
                 },
                 {
@@ -22,12 +27,17 @@ import { DonateComponent } from 'app/donate/donate.component';
                 },
                 {
                     path: 'self-service-landscape',
-                    redirectTo: '/self-service-landscape/ln-zeus',
+                    redirectTo: '/self-service-landscape/zeus',
                     pathMatch: 'full'
                 },
                 {
                     path: 'self-service-landscape/:id',
                     component: SelfServiceLandscapeComponent
+                },
+                {
+                    path: 'donate',
+                    redirectTo: '/donate/zeus',
+                    pathMatch: 'full'
                 },
                 {
                     path: 'donate/:id',

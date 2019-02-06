@@ -1,8 +1,5 @@
 package ch.puzzle.ln.zeus.domain;
 
-import ch.puzzle.ln.zeus.config.ApplicationProperties;
-import ch.puzzle.ln.zeus.config.ApplicationProperties.Product;
-import ch.puzzle.ln.zeus.config.ApplicationProperties.Shop;
 import ch.puzzle.ln.zeus.domain.enums.InvoiceType;
 
 import javax.persistence.*;
@@ -76,11 +73,9 @@ public class Invoice implements Serializable {
     @Enumerated(EnumType.STRING)
     private InvoiceType invoiceType;
 
-    @NotNull
     @Column(name = "pickup_location")
     private String pickupLocation;
 
-    @NotNull
     @Column(name = "pickup_delay_minutes")
     private Integer pickupDelayMinutes;
 

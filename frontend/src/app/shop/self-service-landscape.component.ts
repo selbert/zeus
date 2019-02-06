@@ -1,15 +1,16 @@
 import { Component, HostListener, OnDestroy } from '@angular/core';
-import { Invoice } from 'app/shared/model/invoice.model';
-import { getProductByType, getSelfServiceOrders } from 'app/shared/model/products.model';
+import { generateOrderName, Invoice, InvoiceType } from 'app/shared/model/invoice.model';
+import { clone, getProductByKey, PickupLocation, Product, SelfServiceConfiguration } from 'app/shared/model/product.model';
 import { flash } from 'light-it-up';
 import * as _ from 'lodash';
 import * as $ from 'jquery';
-import { interval } from 'rxjs/index';
+import { forkJoin, interval } from 'rxjs';
 import { Subscription } from 'rxjs/Rx';
 import { CheckoutDialogService } from 'app/shop/checkout-dialog.service';
 import { SUCCESS_FLASH_DURATION } from 'app/shop/checkout.component';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { InvoiceService } from 'app/shared/service/invoice.service';
+import { ShopService } from 'app/shop/shop.service';
 
 const DEFAULT_COUNTDOWN_SECONDS = 300;
 const DEFAULT_DIALOG_TIMEOUT_SECONDS = 6;
@@ -21,6 +22,9 @@ const DEFAULT_WEBSOCKET_RETRY_TIMEOUT = 5000;
     styleUrls: ['self-service-landscape.component.scss']
 })
 export class SelfServiceLandscapeComponent implements OnDestroy {
+    locations: PickupLocation[] = null;
+    products: Product[] = null;
+    config: SelfServiceConfiguration = null;
     qrCodeSize = 250;
     error: string;
     orders: Invoice[];
@@ -29,14 +33,32 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
     countdownSeconds = DEFAULT_COUNTDOWN_SECONDS;
 
     constructor(
+        private shopService: ShopService,
         private invoiceService: InvoiceService,
         private checkoutDialogService: CheckoutDialogService,
         private route: ActivatedRoute
     ) {
-        this.route.paramMap.subscribe((params: ParamMap) => (this.memoPrefix = params.get('id')));
-        this.startCountdown();
-        this.setupInvoices();
-        this.listenOnWebSocket();
+        this.route.paramMap.subscribe((value: ParamMap) => {
+            this.memoPrefix = value.get('id');
+            forkJoin(this.shopService.getFrontendConfig(), this.shopService.getConfiguration()).subscribe(results => {
+                this.config = results[0].selfService;
+                const allProducts = results[1].products;
+                this.products = this.config.products.map(p => {
+                    const overriddenProduct = getProductByKey(allProducts, p.productKey);
+                    if (p.optionOverride && p.optionOverride.length > 0) {
+                        overriddenProduct.options = p.optionOverride;
+                    }
+                    if (p.titleOverride) {
+                        overriddenProduct.title = p.titleOverride;
+                    }
+                    return overriddenProduct;
+                });
+                this.locations = results[1].locations;
+                this.startCountdown();
+                this.setupInvoices();
+                this.listenOnWebSocket();
+            });
+        });
     }
 
     listenOnWebSocket() {
@@ -77,8 +99,23 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
         });
     }
 
+    getSelfServiceOrders(): Invoice[] {
+        return this.config.products.map(item => ({
+            orderName: generateOrderName(),
+            pickupLocation: this.locations && this.locations.length > 0 ? this.locations[0].key : null,
+            pickupDelayMinutes: 0,
+            orderItems: [
+                {
+                    ...clone(getProductByKey(this.products, item.productKey)),
+                    count: 1
+                }
+            ],
+            invoiceType: InvoiceType.SELF_ORDER
+        }));
+    }
+
     setupInvoices() {
-        this.orders = getSelfServiceOrders(true);
+        this.orders = this.getSelfServiceOrders();
         this.orders.forEach((order, index) => {
             order.memoPrefix = this.memoPrefix;
             this.invoiceService.createInvoice(order).subscribe((invoice: Invoice) => {
@@ -98,7 +135,7 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
         setTimeout(() => {
             this.checkoutDialogService.openDialog(invoice, true, DEFAULT_DIALOG_TIMEOUT_SECONDS);
             if (index >= 0) {
-                this.orders[index] = getSelfServiceOrders(true)[index];
+                this.orders[index] = this.getSelfServiceOrders()[index];
                 this.invoiceService.createInvoice(this.orders[index]).subscribe((newInvoice: Invoice) => {
                     this.orders[index] = newInvoice;
                 }, err => (this.error = err.error.message));
@@ -106,7 +143,16 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
         }, SUCCESS_FLASH_DURATION);
     }
 
-    product(index) {
-        return getProductByType(this.orders[index].orderItems[0].itemType);
+    getClasses(index) {
+        let orientation = 'top';
+        if (index > 1) {
+            orientation = 'bottom';
+        }
+        if (index % 2 === 0) {
+            orientation += '-left';
+        } else {
+            orientation += '-right';
+        }
+        return 'idx-' + index + ' ' + orientation;
     }
 }

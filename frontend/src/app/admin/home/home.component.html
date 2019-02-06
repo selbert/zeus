@@ -1,7 +1,7 @@
 <h3 *ngIf="!isAuthenticated()">Welcome to the admin section. Please log in.</h3>
-<h3 *ngIf="isAuthenticated()">Welcome to the admin section, {{account.login}}.</h3>
+<h3 *ngIf="isAuthenticated()">Welcome to the admin section, {{account?.login}}.</h3>
 
-<div *ngIf="isAuthenticated() && shopActiveConfig">
+<div *ngIf="isAuthenticated() && shopActiveConfig && shopOverrideConfig">
     <div *ngIf="!shopActiveConfig.valueBoolean">
         Your shop is currently <strong>disabled</strong>!<br/>
         <button class="btn btn-primary" (click)="setShopActive(true)">
@@ -16,7 +16,22 @@
         </button>
     </div>
 
-    <br/><br/><br/>
+    <br/><br/>
+    <div *ngIf="!shopOverrideConfig.valueBoolean">
+        Your opening hours are currently <strong>normal</strong>!<br/>
+        <button class="btn btn-danger" (click)="setShopOverride(true)">
+            Force shop to stay open longer (override opening hours)
+        </button>
+    </div>
+
+    <div *ngIf="shopOverrideConfig.valueBoolean">
+        Your opening hours are currently <strong>overridden</strong>, the shop won't close automatically!<br/>
+        <button class="btn btn-primary" (click)="setShopOverride(false)">
+            Reset to normal opening hours
+        </button>
+    </div>
+
+    <br/><br/>
     <button class="btn btn-danger" (click)="restartShop()">
         Send reload command to all self service displays
     </button>

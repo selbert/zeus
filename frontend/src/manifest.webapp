@@ -1,10 +1,10 @@
 {
-  "name": "Self-order Point of Sale solution, powered by the Lightning Network",
-  "short_name": "ln-self-order-pos",
+  "name": "Zeus: The self-order Point of Sale solution, powered by the Lightning Network",
+  "short_name": "zeus",
   "icons": [
       {
-          "src": "./content/icons/logo-192x192.png",
-          "sizes": "192x192",
+          "src": "./content/icons/puzzle-itc.png",
+          "sizes": "120x121",
           "type": "image/png"
       }
   ],

@@ -16,7 +16,7 @@
         <div class="col-md-11 payment-request">
             <fa-icon size="6x" icon="check-circle" class="success"></fa-icon>
             <div class="intro">
-                Thank you for your payment of CHF {{order.total | number : '1.2-2'}}
+                Thank you for your payment of CHF {{order.amountChf | number : '1.2-2'}}
                 ({{order.amount | number : '1.0-0'}} Satoshi).<br/>
                 You can claim your order by mentioning the name:<br/>
                 <strong>{{order.orderName}}</strong>

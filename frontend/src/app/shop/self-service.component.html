@@ -1,97 +1,24 @@
-<div class="self-service-grid">
-    <div class="grid-card one top-left flash-0">
+<div class="self-service-grid" *ngIf="products">
+    <div *ngFor="let product of products; let i = index"
+         [ngClass]="'grid-card flash-' + i + ' ' + getClasses(i)">
         <h3>
-            {{product(0).title}}<br/>
-            {{orders[0].orderItems[0].options[0]}}
+            {{product.title}}<br/>
+            {{orders[i].orderItems[0].options[0]}}
         </h3>
-        <qrcode *ngIf="orders[0].paymentRequest"
-                [qrdata]="orders[0].paymentRequest"
+        <qrcode *ngIf="orders[i].paymentRequest"
+                [qrdata]="orders[i].paymentRequest"
                 [size]="qrCodeSize"
                 level="L"
-                [colordark]="'#1e5a96'"
-                [colorlight]="'#ffffff'"
                 [attr.title]="''">
         </qrcode>
-        <div class="alert alert-danger" *ngIf="!orders[0].paymentRequest">
+        <div class="alert alert-danger" *ngIf="!orders[i].paymentRequest">
             Shop is currently closed for online orders. Please come back tomorrow!
         </div>
         <section>
-            <div [class]="'picture ' + product(0).type.toLowerCase()"></div>
+            <div [class]="'picture ' + product.productKey.toLowerCase()"></div>
             <div class="price">
                 <span class="unit">CHF</span>
-                {{product(0).price | number : '1.2-2'}}
-            </div>
-        </section>
-    </div>
-    <div class="grid-card two top-right flash-1">
-        <h3>
-            {{product(1).title}}<br/>
-            {{orders[1].orderItems[0].options[0]}}
-        </h3>
-        <qrcode *ngIf="orders[1].paymentRequest"
-                [qrdata]="orders[1].paymentRequest"
-                [size]="qrCodeSize"
-                level="L"
-                [colordark]="'#1e5a96'"
-                [colorlight]="'#ffffff'"
-                [attr.title]="''">
-        </qrcode>
-        <div class="alert alert-danger" *ngIf="!orders[1].paymentRequest">
-            Shop is currently closed for online orders. Please come back tomorrow!
-        </div>
-        <section>
-            <div [class]="'picture ' + product(1).type.toLowerCase()"></div>
-            <div class="price">
-                <span class="unit">CHF</span>
-                {{product(1).price | number : '1.2-2'}}
-            </div>
-        </section>
-    </div>
-    <div class="grid-card tre bottom-left flash-2">
-        <h3>
-            {{product(2).title}}<br/>
-            {{orders[2].orderItems[0].options[0]}}
-        </h3>
-        <qrcode *ngIf="orders[2].paymentRequest"
-                [qrdata]="orders[2].paymentRequest"
-                [size]="qrCodeSize"
-                level="L"
-                [colordark]="'#1e5a96'"
-                [colorlight]="'#ffffff'"
-                [attr.title]="''">
-        </qrcode>
-        <div class="alert alert-danger" *ngIf="!orders[2].paymentRequest">
-            Shop is currently closed for online orders. Please come back tomorrow!
-        </div>
-        <section>
-            <div [class]="'picture ' + product(2).type.toLowerCase()"></div>
-            <div class="price">
-                <span class="unit">CHF</span>
-                {{product(2).price | number : '1.2-2'}}
-            </div>
-        </section>
-    </div>
-    <div class="grid-card fou bottom-right flash-3">
-        <h3>
-            {{product(3).title}}<br/>
-            {{orders[3].orderItems[0].options[0]}}
-        </h3>
-        <qrcode *ngIf="orders[3].paymentRequest"
-                [qrdata]="orders[3].paymentRequest"
-                [size]="qrCodeSize"
-                level="L"
-                [colordark]="'#1e5a96'"
-                [colorlight]="'#ffffff'"
-                [attr.title]="''">
-        </qrcode>
-        <div class="alert alert-danger" *ngIf="!orders[3].paymentRequest">
-            Shop is currently closed for online orders. Please come back tomorrow!
-        </div>
-        <section>
-            <div [class]="'picture ' + product(3).type.toLowerCase()"></div>
-            <div class="price">
-                <span class="unit">CHF</span>
-                {{product(3).price | number : '1.2-2'}}
+                {{product.price | number : '1.2-2'}}
             </div>
         </section>
     </div>
@@ -103,13 +30,13 @@
         </h1>
         <div class="info">
             <strong>
-                Buy delicious product 1 to 4 and pay with Bitcoin over the
+                Buy delicious beer and pay with Bitcoin over the
                 Lightning Network <span class="lightning-bolt"></span>
             </strong>
             <br/>
             <ol>
                 <li>Scan and pay one of the QR codes with your Lightning Network enabled wallet.</li>
-                <li>Get your product 1 to 4 immediately.</li>
+                <li>Get your beer immediately.</li>
             </ol>
         </div>
         <div class="info-bottom">

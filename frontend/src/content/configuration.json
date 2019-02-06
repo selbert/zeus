@@ -1,0 +1,22 @@
+{
+    "selfService": {
+        "products": [
+            {
+                "productKey": "LARGE",
+                "optionOverride": ["\"Lightning ale\""]
+            },
+            {
+                "productKey": "LARGE",
+                "optionOverride": ["\"Block brew\""]
+            },
+            {
+                "productKey": "SMALL",
+                "optionOverride": ["\"Coin stout\""]
+            },
+            {
+                "productKey": "SMALL",
+                "optionOverride": ["\"Thunderous amber\""]
+            }
+        ]
+    }
+}

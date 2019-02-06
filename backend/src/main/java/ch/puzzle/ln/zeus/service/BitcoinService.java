@@ -54,7 +54,6 @@ public class BitcoinService {
         }
     }
 
-
     public Map<String, Object> chainInfo() throws Exception {
         RestTemplate tpl = new RestTemplate();
         if (Objects.equals(bitcoinProperties.getRestUrl(), DISABLED_VALUE)) {

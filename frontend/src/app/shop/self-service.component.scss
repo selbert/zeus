@@ -100,11 +100,11 @@
         bottom: 0;
         left: 0;
 
-        &.large_beer {
+        &.large {
             background-image: url(/content/images/product-1.jpg);
         }
 
-        &.small_beer {
+        &.small {
             background-image: url(/content/images/product-2.jpg);
         }
     }
@@ -149,22 +149,22 @@
     }
 }
 
-.one {
+.idx-0 {
     grid-column: col 1 / span 8;
     grid-row: row 1 / span 8;
 }
 
-.two {
+.idx-1 {
     grid-column: col 10 / span 8;
     grid-row: row 1 / span 8;
 }
 
-.tre {
+.idx-2 {
     grid-column: col 1 / span 8;
     grid-row: row 10 / span 8;
 }
 
-.fou {
+.idx-3 {
     grid-column: col 10 / span 8;
     grid-row: row 10 / span 8;
 }

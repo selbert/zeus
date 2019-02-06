@@ -1,14 +1,14 @@
-<div class="self-service-grid">
+<div class="self-service-grid" *ngIf="products">
     <div class="grid-card one top-left">
         <h1 id="site-title">
             <img width="96" class="right" src="/content/icons/puzzle-itc.png"
                  alt="Puzzle ITC GmbH">
         </h1>
         <section>
-            <div [class]="'picture ' + product(0).type.toLowerCase()"></div>
+            <div [class]="'picture ' + products[0].productKey.toLowerCase()"></div>
             <div class="price">
                 <span class="unit">CHF</span>
-                {{product(0).price | number : '1.2-2'}}
+                {{products[0].price | number : '1.2-2'}}
             </div>
         </section>
     </div>
@@ -16,7 +16,7 @@
     <div class="grid-card two top-right">
         <div id="flash-receiver"></div>
         <h3>
-            {{product(0).title}}<br/>
+            {{products[0].title}}<br/>
             {{orders[0].orderItems[0].options[0]}}
         </h3>
         <qrcode *ngIf="orders[0].paymentRequest"

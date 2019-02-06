@@ -5,6 +5,7 @@ import { Account, LoginModalService, Principal } from 'app/core';
 import { HomeService } from 'app/admin/home/home.service';
 
 export const KEY_SHOP_ACTIVE = 'shop.active';
+export const KEY_SHOP_OVERRIDE = 'shop.override';
 
 @Component({
     selector: 'jhi-home',
@@ -14,6 +15,7 @@ export class JhiHomeComponent implements OnInit {
     account: Account;
     modalRef: NgbModalRef;
     shopActiveConfig: any;
+    shopOverrideConfig: any;
 
     constructor(
         private principal: Principal,
@@ -32,10 +34,15 @@ export class JhiHomeComponent implements OnInit {
 
     loadConfig() {
         this.homeService.getConfiguration(KEY_SHOP_ACTIVE).subscribe(config => (this.shopActiveConfig = config));
+        this.homeService.getConfiguration(KEY_SHOP_OVERRIDE).subscribe(config => (this.shopOverrideConfig = config));
     }
 
     setShopActive(val) {
         this.homeService.setConfiguration(KEY_SHOP_ACTIVE, `${val}`).subscribe(() => this.loadConfig());
+    }
+
+    setShopOverride(val) {
+        this.homeService.setConfiguration(KEY_SHOP_OVERRIDE, `${val}`).subscribe(() => this.loadConfig());
     }
 
     restartShop() {

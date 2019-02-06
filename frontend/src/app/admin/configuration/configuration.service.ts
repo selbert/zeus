@@ -40,7 +40,7 @@ export class JhiConfigurationService {
             }
         }
         // by default, use the default ApplicationContext Id
-        return res['contexts']['ln-self-order-zeus']['beans'];
+        return res['contexts']['zeus']['beans'];
     }
 
     getEnv(): Observable<any> {

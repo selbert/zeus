@@ -4,7 +4,6 @@ import { Invoice } from 'app/shared/model/invoice.model';
 import { InvoiceService } from 'app/shared/service/invoice.service';
 import { SUCCESS_FLASH_DURATION } from 'app/shop/checkout.component';
 import { flash } from 'light-it-up';
-import * as _ from 'lodash';
 import * as $ from 'jquery';
 
 @Component({
