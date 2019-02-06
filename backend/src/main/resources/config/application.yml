@@ -43,6 +43,7 @@ spring:
         favicon:
             enabled: false
     thymeleaf:
+
         mode: HTML
 
 server:
@@ -101,11 +102,12 @@ application:
         invoiceExpirySeconds: 300
     bitcoin:
         tickerUrl: https://blockchain.info/ticker
-        connectTimeout: 3000
-        readTimeout: 3000
+        tickerBackupUrl: https://public-api.lykke.com/api/AssetPairs/rate/BTCCHF
+        connectTimeout: 2000
+        readTimeout: 2000
     mail:
         processorEnabled: true
         subject: 'Zeus Order '
-        paymentText: Thank you for paying with Bitcoin!
+        paymentText: 'Thank you for paying with Bitcoin!'
     twitter:
         processorEnabled: false

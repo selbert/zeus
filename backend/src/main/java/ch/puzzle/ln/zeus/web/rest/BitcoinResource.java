@@ -24,7 +24,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/bitcoin")
 public class BitcoinResource extends AbstractHealthIndicator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BitcoinResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BitcoinResource.class);
 
     private final ApplicationProperties applicationProperties;
     private final BitcoinService bitcoinService;
@@ -43,7 +43,7 @@ public class BitcoinResource extends AbstractHealthIndicator {
     @GetMapping("/price/{ticker}")
     @Timed
     public ResponseEntity<Object> getPrice(@PathVariable String ticker) {
-        LOG.debug("REST request to get bitcoin price in {}", ticker);
+        LOGGER.debug("REST request to get bitcoin price in {}", ticker);
         return ok(Collections.singletonMap(FIELD_BUY, bitcoinService.buyPricePerBitcoinIn(ticker)));
     }
 
@@ -51,7 +51,7 @@ public class BitcoinResource extends AbstractHealthIndicator {
     @GetMapping("/prices/stale")
     @Timed
     public ResponseEntity<List<String>> getStalePrices() {
-        LOG.debug("REST request to get stale bitcoin prices");
+        LOGGER.debug("REST request to get stale bitcoin prices");
         return ok(bitcoinService.getStalePrices());
     }
 
@@ -59,7 +59,7 @@ public class BitcoinResource extends AbstractHealthIndicator {
     @GetMapping("/prices/age")
     @Timed
     public ResponseEntity<Map<String, Long>> getPricesAge() {
-        LOG.debug("REST request to get bitcoin prices age");
+        LOGGER.debug("REST request to get bitcoin prices age");
         return ok(bitcoinService.getPricesAge());
     }
 
@@ -85,6 +85,7 @@ public class BitcoinResource extends AbstractHealthIndicator {
                 .withDetail("blockHash", info.get("bestblockhash"))
                 .up();
         } catch (Exception e) {
+            LOGGER.error("Error in bitcoin health check.", e);
             builder.down(e);
         }
     }
