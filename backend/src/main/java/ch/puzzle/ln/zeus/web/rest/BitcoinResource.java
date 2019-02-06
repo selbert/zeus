@@ -47,7 +47,6 @@ public class BitcoinResource extends AbstractHealthIndicator {
         return ok(Collections.singletonMap(FIELD_BUY, bitcoinService.buyPricePerBitcoinIn(ticker)));
     }
 
-
     @GetMapping("/prices/stale")
     @Timed
     public ResponseEntity<List<String>> getStalePrices() {
@@ -55,14 +54,12 @@ public class BitcoinResource extends AbstractHealthIndicator {
         return ok(bitcoinService.getStalePrices());
     }
 
-
     @GetMapping("/prices/age")
     @Timed
     public ResponseEntity<Map<String, Long>> getPricesAge() {
         LOGGER.debug("REST request to get bitcoin prices age");
         return ok(bitcoinService.getPricesAge());
     }
-
 
     @Override
     protected void doHealthCheck(Health.Builder builder) {

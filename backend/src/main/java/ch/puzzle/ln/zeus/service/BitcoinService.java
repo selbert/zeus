@@ -17,9 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -33,6 +31,7 @@ public class BitcoinService {
     private static final Long SATOSHIS_IN_BTC = 100000000L;
     public static final String FIELD_BUY = "buy";
     private static final String FIELD_BID = "bid";
+    private static final String DISABLED_VALUE = "disabled";
 
     private final Map<String, AtomicBitcoinPrice> lastBitcoinBuyPriceMap = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> lastBitcoinPriceUpdateMap = new ConcurrentHashMap<>();
@@ -58,6 +57,12 @@ public class BitcoinService {
 
     public Map<String, Object> chainInfo() throws Exception {
         RestTemplate tpl = new RestTemplate();
+        if (Objects.equals(bitcoinProperties.getRestUrl(), DISABLED_VALUE)) {
+            Map<String, Object> disabled = new HashMap<>();
+            disabled.put("blocks", "<rest URL check disabled>");
+            disabled.put("bestblockhash", "<rest URL check disabled>");
+            return disabled;
+        }
         RequestEntity<Void> request = RequestEntity.get(bitcoinProperties.getRestUri()).accept(APPLICATION_JSON).build();
         ResponseEntity<Map<String, Object>> parsed = tpl.exchange(request, new InfoResponseType());
         if (parsed.getStatusCode().is2xxSuccessful() && parsed.getBody() != null) {
@@ -87,7 +92,8 @@ public class BitcoinService {
         return lastBitcoinPriceUpdateMap.entrySet().stream()
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
-                e -> Duration.between(e.getValue(), LocalDateTime.now()).toMillis()));
+                e -> Duration.between(e.getValue(), LocalDateTime.now()).toMillis())
+            );
     }
 
     Map<String, Object> pricePerBitcoinIn(String ticker) {
