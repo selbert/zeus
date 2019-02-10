@@ -6,7 +6,8 @@ RUN apt-get update && apt-get -y install openssl
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
     JAVA_OPTS="-XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90" \
-    HOME=/home/jboss
+    HOME=/home/jboss \
+    TZ=Europe/Zurich
 
 WORKDIR ${HOME}
 
