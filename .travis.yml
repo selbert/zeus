@@ -36,8 +36,8 @@ after_success:
       docker push "guggero/zeus-backend:latest";
       docker push "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER";
 
-      cp frontend/docker/* frontend/build/www;
-      docker build -t "guggero/zeus-frontend:latest" -t "guggero/zeus-frontend:$TRAVIS_BUILD_NUMBER" frontend/build/www/;
+      cp frontend/docker/* frontend/build;
+      docker build -t "guggero/zeus-frontend:latest" -t "guggero/zeus-frontend:$TRAVIS_BUILD_NUMBER" frontend/build/;
       docker push "guggero/zeus-frontend:latest";
       docker push "guggero/zeus-frontend:$TRAVIS_BUILD_NUMBER";
     fi
