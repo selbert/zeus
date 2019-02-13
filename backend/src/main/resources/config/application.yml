@@ -111,3 +111,16 @@ application:
         paymentText: 'Thank you for paying with Bitcoin!'
     twitter:
         processorEnabled: false
+    shop:
+        allowPickupDelay: false
+        products:
+            - title: 'Large'
+              productKey: 'LARGE'
+              price: 2
+              options:
+                  - '"Lightning ale"'
+            - title: 'Small'
+              productKey: 'SMALL'
+              price: 1
+              options:
+                  - '"Coin stout"'
