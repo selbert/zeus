@@ -3,15 +3,13 @@ package ch.puzzle.ln.zeus.service;
 import ch.puzzle.ln.zeus.config.ApplicationProperties;
 import ch.puzzle.ln.zeus.config.ApplicationProperties.Lnd;
 import ch.puzzle.ln.zeus.service.util.ConvertUtil;
+import io.grpc.Status;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
-import org.lightningj.lnd.wrapper.AsynchronousLndAPI;
-import org.lightningj.lnd.wrapper.StatusException;
-import org.lightningj.lnd.wrapper.SynchronousLndAPI;
-import org.lightningj.lnd.wrapper.ValidationException;
+import org.lightningj.lnd.wrapper.*;
 import org.lightningj.lnd.wrapper.message.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,7 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
 
     private static final Logger LOG = LoggerFactory.getLogger(LndService.class);
     private static final long CONNECTION_RETRY_TIMEOUT = 5000;
+    private static final long NODE_LOCKED_RETRY_TIMEOUT = 30000;
 
     private final ResourceLoader resourceLoader;
     private final ApplicationProperties applicationProperties;
@@ -63,7 +62,6 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
         }
         return asyncAPI;
     }
-
 
     private SynchronousLndAPI getSyncInvoiceApi() throws IOException {
         if (syncInvoiceAPI == null) {
@@ -163,7 +161,16 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
 
     @Override
     public void onError(Throwable t) {
-        LOG.error("Subscription for listening to invoices failed!", t);
+        if (t instanceof ServerSideException && ((ServerSideException) t).getStatus().getCode() == Status.Code.UNIMPLEMENTED) {
+            LOG.error("It seems the lightning node is locked! Please unlock it. Will try again in {} seconds.", NODE_LOCKED_RETRY_TIMEOUT / 1000);
+            try {
+                Thread.sleep(NODE_LOCKED_RETRY_TIMEOUT);
+            } catch (InterruptedException e1) {
+                LOG.error("woke up from sleep, exiting loop", e1);
+            }
+        } else {
+            LOG.error("Subscription for listening to invoices failed!", t);
+        }
         try {
             resetAsyncApi();
             subscribeToInvoices();
@@ -173,7 +180,7 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
                 Thread.sleep(CONNECTION_RETRY_TIMEOUT);
                 onError(e);
             } catch (InterruptedException e1) {
-                LOG.error("woke up from sleep, exiting loop", e);
+                LOG.error("woke up from sleep, exiting loop", e1);
             }
         }
     }
