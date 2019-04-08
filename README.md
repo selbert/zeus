@@ -1,6 +1,8 @@
-# zeus
+# Zeus Server
 
-Zeus is a Lightning Network Point of Sale application for LND, written in Java.
+Zeus Server is a Lightning Network Point of Sale application for LND, written in Java.
+
+If you are looking for the Mobile App, please visit [ZeusLN/zeus](https://github.com/ZeusLN/zeus).
 
 ![screenshot](doc/screenshot.png)
 
