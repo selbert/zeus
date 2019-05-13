@@ -135,6 +135,8 @@ dependencies {
     compile "org.lightningj:lightningj:0.6.1-Beta"
     compile "io.netty:netty-tcnative-boringssl-static:2.0.12.Final"
     compile "org.twitter4j:twitter4j-core:4.0.7"
+    compile 'io.sentry:sentry-logback:1.7.16'
+
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen"
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor") {
