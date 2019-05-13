@@ -1,7 +1,6 @@
 #!/bin/sh
 
 set -x
-set -o nounset
 
 server_url() {
     echo "Replacing BACKEND_SERVER_URL with $1 in /usr/share/nginx/html/index.html"
