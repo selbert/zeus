@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+    zeus-db:
+        image: postgres:11.2
+        volumes:
+            - db-data:/var/lib/postgresql/data/
+        networks:
+            zeus:
+                aliases:
+                    - zeus-db
+        environment:
+            - POSTGRES_USER=zeus
+            - POSTGRES_PASSWORD=zeus
+            - POSTGRES_DB=zeus
+        ports:
+            - 5441:5432
+        restart: unless-stopped
+
+    backend:
+        image: guggero/zeus-backend:latest
+        volumes:
+            - ./backend/src/main/resources/config/application-local-zeus.yml:/home/zeus/config/application-dev.yml
+            - ./backend/src/main/resources/certs/tls.cert:/home/zeus/config/certs/tls.cert
+        networks:
+            zeus:
+                aliases:
+                    - zeus-backend
+        environment:
+            - SPRING_PROFILES_ACTIVE=dev
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://zeus-db:5432/zeus
+        ports:
+            - 8080:8080
+
+    frontend:
+        image: guggero/zeus-frontend:latest
+        networks:
+            zeus:
+                aliases:
+                    - zeus-frontend
+        environment:
+            - BACKEND_SERVER_URL=http://localhost:8080/
+        ports:
+            - 9000:8080
+
+networks:
+    zeus:
+
+volumes:
+    db-data:

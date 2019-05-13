@@ -31,8 +31,8 @@ script: ./gradlew -Pprod clean build
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-      cp backend/build/libs/*.war backend/src/main/docker;
-      docker build -t "guggero/zeus-backend:latest" -t "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER" backend/src/main/docker/;
+      cp backend/src/main/docker/* backend/build/libs;
+      docker build -t "guggero/zeus-backend:latest" -t "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER" backend/build/libs/;
       docker push "guggero/zeus-backend:latest";
       docker push "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER";
 

@@ -1,7 +1,7 @@
 logging:
     level:
         io.github.jhipster: DEBUG
-        ch.puzzle.ln.pos: DEBUG
+        ch.puzzle.ln.zeus: DEBUG
 
 spring:
     profiles:
@@ -15,6 +15,7 @@ spring:
     jackson:
         serialization.indent_output: true
     datasource:
+        # See section 'Use persistent development DB' in the README to set this up
         type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:postgresql://localhost:5441/zeus
         username: zeus
@@ -30,6 +31,7 @@ spring:
             hibernate.generate_statistics: true
     liquibase:
         contexts: dev
+        drop-first: true
     mail:
         host: localhost
         port: 25
@@ -56,9 +58,28 @@ jhipster:
                 secret: my-secret-token-to-change-in-production
     mail: # specific JHipster mail property, for standard properties see MailProperties
         base-url: http://127.0.0.1:8080
+    cors:
+        allowed-origins: "*"
+        allowed-methods: GET, PUT, POST, DELETE, OPTIONS
+        allowed-headers: "*"
+        exposed-headers:
+        allow-credentials: true
+        max-age: 1800
 
 application:
+    memoPrefix: 'zeus '
+    currencyTicker: CHF
+    taxMultiplier: 0.077
+    bitcoin:
+        # point this to http://<bitcoind-hostname>:8332/rest/chaininfo.json if you have a full node.
+        # set it to 'disabled' if you don't have a bitcoind full node running.
+        restUrl: disabled
+    mail:
+        send: true
+        recipient: mail@example.com
     lnd:
-        certPath: classpath:/certs/example.cert
+        host: localhost
+        port: 10009
+        certPath: classpath:/certs/tls.cert
         invoiceMacaroonHex:
         readonlyMacaroonHex:

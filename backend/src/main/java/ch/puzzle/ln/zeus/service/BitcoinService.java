@@ -137,7 +137,7 @@ public class BitcoinService {
     }
 
     @Scheduled(cron = "0 * * * * *")
-    private void updateBitcoinPrices() {
+    public void updateBitcoinPrices() {
         lastBitcoinBuyPriceMap.forEach((ticker, price) -> updateBitcoinPrice(ticker));
     }
 
