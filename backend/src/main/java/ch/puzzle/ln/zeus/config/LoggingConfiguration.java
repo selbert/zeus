@@ -4,6 +4,7 @@ import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.boolex.OnMarkerEvaluator;
+import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggerContextListener;
 import ch.qos.logback.core.Appender;
@@ -11,6 +12,7 @@ import ch.qos.logback.core.filter.EvaluatorFilter;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.spi.FilterReply;
 import io.github.jhipster.config.JHipsterProperties;
+import io.sentry.logback.SentryAppender;
 import net.logstash.logback.appender.LogstashTcpSocketAppender;
 import net.logstash.logback.encoder.LogstashEncoder;
 import net.logstash.logback.stacktrace.ShortenedThrowableConverter;
@@ -93,6 +95,19 @@ public class LoggingConfiguration {
         context.getLogger("ROOT").addAppender(asyncLogstashAppender);
     }
 
+    private void addSentryAppender(LoggerContext context) {
+        log.info("Initializing Logstash logging");
+
+        SentryAppender sentryAppender = new SentryAppender();
+        ThresholdFilter warningFilter = new ThresholdFilter();
+        warningFilter.setLevel("WARN");
+        sentryAppender.addFilter(warningFilter);
+        sentryAppender.setContext(context);
+        sentryAppender.start();
+
+        context.getLogger("ROOT").addAppender(sentryAppender);
+    }
+
     // Configure a log filter to remove "metrics" logs from all appenders except the "LOGSTASH" appender
     private void setMetricsMarkerLogbackFilter(LoggerContext context) {
         log.info("Filtering metrics logs from all appenders except the {} appender", LOGSTASH_APPENDER_NAME);
@@ -134,11 +149,13 @@ public class LoggingConfiguration {
         @Override
         public void onStart(LoggerContext context) {
             addLogstashAppender(context);
+            addSentryAppender(context);
         }
 
         @Override
         public void onReset(LoggerContext context) {
             addLogstashAppender(context);
+            addSentryAppender(context);
         }
 
         @Override
