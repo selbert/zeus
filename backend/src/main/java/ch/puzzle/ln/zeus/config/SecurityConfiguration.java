@@ -110,6 +110,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/**").authenticated()
             .antMatchers("/websocket/tracker").authenticated()
             .antMatchers("/websocket/**").permitAll()
+            .antMatchers("/prometheus").permitAll()
             .antMatchers("/management/liveness").permitAll()
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()

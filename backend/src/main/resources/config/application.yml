@@ -1,9 +1,16 @@
 management:
     endpoints:
         web:
-            base-path: /management
+            base-path: /
             exposure:
-                include: ["configprops", "env", "health", "info", "threaddump"]
+                include: ["configprops", "env", "health", "info", "threaddump", "prometheus"]
+            path-mapping:
+                configprops: management/configprops
+                env: management/env
+                health: management/health
+                info: management/info
+                threaddump: management/threaddump
+                prometheus: prometheus
     endpoint:
         health:
             show-details: when_authorized
@@ -14,7 +21,32 @@ management:
         mail:
             enabled: true # When using the MailService, configure an SMTP server and set this to true
     metrics:
-        enabled: false # http://micrometer.io/ is disabled by default, as we use http://metrics.dropwizard.io/ instead
+        export:
+            # Prometheus is the default metrics backend
+            prometheus:
+                enabled: true
+                step: 60
+        binders:
+            jvm:
+                enabled: true
+            processor:
+                enabled: true
+            uptime:
+                enabled: true
+            logback:
+                enabled: true
+            files:
+                enabled: true
+            integration:
+                enabled: true
+        distribution:
+            percentiles-histogram:
+                all: true
+            percentiles:
+                all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+        web:
+            server:
+                auto-time-requests: true
 
 logging:
     level:
@@ -81,12 +113,6 @@ jhipster:
         contact-email:
         license:
         license-url:
-    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-        jmx:
-            enabled: false
-        logs: # Reports Dropwizard metrics in the logs
-            enabled: false
-            report-frequency: 60 # in seconds
     logging:
         logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
             enabled: false

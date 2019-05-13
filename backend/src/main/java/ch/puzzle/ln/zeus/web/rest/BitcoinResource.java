@@ -2,7 +2,7 @@ package ch.puzzle.ln.zeus.web.rest;
 
 import ch.puzzle.ln.zeus.config.ApplicationProperties;
 import ch.puzzle.ln.zeus.service.BitcoinService;
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -22,6 +22,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/bitcoin")
+@Timed
 public class BitcoinResource extends AbstractHealthIndicator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BitcoinResource.class);
@@ -35,27 +36,23 @@ public class BitcoinResource extends AbstractHealthIndicator {
     }
 
     @GetMapping(value = "")
-    @Timed
     public ResponseEntity<Map<String, Object>> getInfo() throws Exception {
         return ok(bitcoinService.chainInfo());
     }
 
     @GetMapping("/price/{ticker}")
-    @Timed
     public ResponseEntity<Object> getPrice(@PathVariable String ticker) {
         LOGGER.debug("REST request to get bitcoin price in {}", ticker);
         return ok(Collections.singletonMap(FIELD_BUY, bitcoinService.buyPricePerBitcoinIn(ticker)));
     }
 
     @GetMapping("/prices/stale")
-    @Timed
     public ResponseEntity<List<String>> getStalePrices() {
         LOGGER.debug("REST request to get stale bitcoin prices");
         return ok(bitcoinService.getStalePrices());
     }
 
     @GetMapping("/prices/age")
-    @Timed
     public ResponseEntity<Map<String, Long>> getPricesAge() {
         LOGGER.debug("REST request to get bitcoin prices age");
         return ok(bitcoinService.getPricesAge());

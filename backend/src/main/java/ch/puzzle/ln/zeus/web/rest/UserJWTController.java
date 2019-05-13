@@ -3,8 +3,8 @@ package ch.puzzle.ln.zeus.web.rest;
 import ch.puzzle.ln.zeus.security.jwt.JWTConfigurer;
 import ch.puzzle.ln.zeus.security.jwt.TokenProvider;
 import ch.puzzle.ln.zeus.web.rest.vm.LoginVM;
-import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/api")
+@Timed
 public class UserJWTController {
 
     private final TokenProvider tokenProvider;
@@ -35,7 +36,6 @@ public class UserJWTController {
     }
 
     @PostMapping("/authenticate")
-    @Timed
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
 
         UsernamePasswordAuthenticationToken authenticationToken =

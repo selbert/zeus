@@ -5,8 +5,8 @@ import ch.puzzle.ln.zeus.security.AuthoritiesConstants;
 import ch.puzzle.ln.zeus.service.UserService;
 import ch.puzzle.ln.zeus.service.dto.UserDTO;
 import ch.puzzle.ln.zeus.web.rest.util.PaginationUtil;
-import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -22,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@Timed
 public class UserResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserResource.class);
@@ -39,7 +40,6 @@ public class UserResource {
      * @return the ResponseEntity with status 200 (OK) and with body all users
      */
     @GetMapping("/users")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
         final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
@@ -51,7 +51,6 @@ public class UserResource {
      * @return a string list of the all of the roles
      */
     @GetMapping("/users/authorities")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public List<String> getAuthorities() {
         return userService.getAuthorities();
@@ -64,7 +63,6 @@ public class UserResource {
      * @return the ResponseEntity with status 200 (OK) and with body the "login" user, or with status 404 (Not Found)
      */
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         LOG.debug("REST request to get User : {}", login);
@@ -74,7 +72,6 @@ public class UserResource {
     }
 
     @PostMapping("/users/password")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public void changePassword(@RequestBody Map<String, String> passwords) {
         userService.changePassword(passwords.get("oldPassword"), passwords.get("newPassword"));

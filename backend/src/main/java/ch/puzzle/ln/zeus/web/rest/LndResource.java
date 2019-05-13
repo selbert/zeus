@@ -1,7 +1,7 @@
 package ch.puzzle.ln.zeus.web.rest;
 
 import ch.puzzle.ln.zeus.service.LndService;
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
 import org.lightningj.lnd.wrapper.message.GetInfoResponse;
 import org.lightningj.lnd.wrapper.message.ListChannelsResponse;
 import org.lightningj.lnd.wrapper.message.NodeInfo;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/lnd")
+@Timed
 public class LndResource extends AbstractHealthIndicator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LndResource.class);
@@ -27,19 +28,16 @@ public class LndResource extends AbstractHealthIndicator {
     }
 
     @GetMapping(value = "")
-    @Timed
     public GetInfoResponse getInfo() throws Exception {
         return lndService.getInfo();
     }
 
     @GetMapping("/channels")
-    @Timed
     public ListChannelsResponse getChannels() throws Exception {
         return lndService.getChannels();
     }
 
     @GetMapping("/nodeinfo/{nodeId}")
-    @Timed
     public NodeInfo getNodeInfo(@PathVariable String nodeId) throws Exception {
         return lndService.getNodeInfo(nodeId);
     }

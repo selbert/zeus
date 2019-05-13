@@ -9,8 +9,8 @@ import ch.puzzle.ln.zeus.web.rest.errors.InternalServerErrorException;
 import ch.puzzle.ln.zeus.web.rest.util.HeaderUtil;
 import ch.puzzle.ln.zeus.web.rest.vm.DonationVM;
 import ch.puzzle.ln.zeus.web.rest.vm.OrderVM;
-import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
+@Timed
 public class InvoiceResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(InvoiceResource.class);
@@ -37,7 +37,6 @@ public class InvoiceResource {
     }
 
     @PostMapping("/invoice/new")
-    @Timed
     public ResponseEntity<InvoiceDTO> createInvoice(@Valid @RequestBody OrderVM order) {
         LOG.debug("REST request to save Order : {}", order);
         Invoice invoice = invoiceService.validateAndMapOrder(order);
@@ -55,7 +54,6 @@ public class InvoiceResource {
     }
 
     @PostMapping("/invoice/donation")
-    @Timed
     public ResponseEntity<InvoiceDTO> createDonation(@Valid @RequestBody DonationVM donation) {
         LOG.debug("REST request to save donation : {}", donation);
         Invoice invoice = invoiceService.validateAndMapDonation(donation);
@@ -80,7 +78,6 @@ public class InvoiceResource {
      * or with status 500 (Internal Server Error) if the invoiceDTO couldn't be updated
      */
     @PutMapping("/invoices")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<InvoiceDTO> updateInvoice(@RequestBody InvoiceDTO invoiceDTO) {
         LOG.debug("REST request to update Invoice : {}", invoiceDTO);
@@ -99,7 +96,6 @@ public class InvoiceResource {
      * @return the ResponseEntity with status 200 (OK) and the list of invoices in body
      */
     @GetMapping("/invoices")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public List<InvoiceDTO> getAllInvoices() {
         LOG.debug("REST request to get all Invoices");
@@ -113,7 +109,6 @@ public class InvoiceResource {
      * @return the ResponseEntity with status 200 (OK) and with body the invoiceDTO, or with status 404 (Not Found)
      */
     @GetMapping("/invoices/{id}")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<InvoiceDTO> getInvoice(@PathVariable Long id) {
         LOG.debug("REST request to get Invoice : {}", id);
@@ -128,7 +123,6 @@ public class InvoiceResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/invoices/{id}")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
         LOG.debug("REST request to delete Invoice : {}", id);

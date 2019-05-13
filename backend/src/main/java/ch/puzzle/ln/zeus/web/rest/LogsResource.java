@@ -4,7 +4,7 @@ import ch.puzzle.ln.zeus.security.AuthoritiesConstants;
 import ch.puzzle.ln.zeus.web.rest.vm.LoggerVM;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/management")
+@Timed
 public class LogsResource {
 
     @GetMapping("/logs")
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public List<LoggerVM> getList() {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -33,7 +33,6 @@ public class LogsResource {
 
     @PutMapping("/logs")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public void changeLevel(@RequestBody LoggerVM jsonLogger) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
