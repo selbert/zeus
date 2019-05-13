@@ -6,18 +6,15 @@ If you are looking for the Mobile App, please visit [ZeusLN/zeus](https://github
 
 ![screenshot](doc/screenshot.png)
 
-This application was generated using JHipster 5.2.0, see
-[README-jhipster.md](doc/README-jhipster.md) for more information on how to
-start, build and run the project.
 
-## How to use
+## Quick Start / How to Use
 
-We built this application as a template so you can build your own fancy
-self-order point of sale screen.
-[You can see a demo video of our version here.](https://twitter.com/gugol/status/1042658297927675905)
+This chapter will show you how you can quickly start Zeus Server.
 
-The following chapters will guide you through the steps that are necessary to
-customize the generic `Zeus` to your needs.
+You will need:
+* Your own LND node (see next chapter)
+* `docker` and `docker-compose` installed on your machine
+
 
 ### Set up your own LND node
 
@@ -25,7 +22,7 @@ The Spring Boot backend uses the
 [LightningJ Java library](https://www.lightningj.org/) to connect to a
 [Lightning Network Daemon (LND)](https://github.com/lightningnetwork/lnd) over
 [gRPC](https://grpc.io/). You will need to set up an LND node with version
-[`0.5.0-beta`](https://github.com/lightningnetwork/lnd/releases/tag/v0.5-beta)
+[`0.6.1-beta`](https://github.com/lightningnetwork/lnd/releases/tag/v0.6.1-beta)
 or newer.
 
 There are many tutorials out there but we recommend either 
@@ -42,7 +39,7 @@ above. We assume that LND saves its files to `~/.lnd/`. If you changed that
 path, adjust the following example paths accordingly. 
 
 * Make sure the gRPC port (default `10009`) of the node is open and reachable
-* Copy the file `~/.lnd/tls.cert` to the folder `src/main/resources/certs`
+* Copy the file `~/.lnd/tls.cert` to the folder `src/main/resources/certs` and also name it `tls.cert`
 * Get the hex value of the `invoice.macaroon` and store it somewhere, we'll need
   this later.  
   Use this command for example:  
@@ -56,81 +53,14 @@ path, adjust the following example paths accordingly.
 
 Now you need to configure the application to use the LND node you just set up.
 
-Here is an example `application-dev.yml`:
+To do this, edit the file `application-dev.yml` in the folder `backend/src/main/resources/config` and
+change the following values:
 
 ```yaml
-logging:
-    level:
-        io.github.jhipster: DEBUG
-        ch.puzzle.ln.zeus: DEBUG
-
-spring:
-    profiles:
-        active: dev
-        include: swagger
-    devtools:
-        restart:
-            enabled: true
-        livereload:
-            enabled: false # we use Webpack dev server + BrowserSync for livereload
-    jackson:
-        serialization.indent_output: true
-    datasource:
-        # See section 'Use persistent development DB' in the README to set this up
-        type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:postgresql://localhost:5441/zeus
-        username: zeus
-        password: zeus
-    jpa:
-        database-platform: io.github.jhipster.domain.util.FixedPostgreSQL82Dialect
-        database: POSTGRESQL
-        show-sql: false
-        properties:
-            hibernate.id.new_generator_mappings: true
-            hibernate.cache.use_second_level_cache: false
-            hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: true
-    liquibase:
-        contexts: dev
-        drop-first: true
-    mail:
-        host: localhost
-        port: 25
-        username:
-        password:
-    messages:
-        cache-duration: PT1S # 1 second, see the ISO 8601 standard
-    thymeleaf:
-        cache: false
-
-server:
-    port: 8080
-
-jhipster:
-    http:
-        version: V_1_1 # To use HTTP/2 you will need SSL support (see above the "server.ssl" configuration)
-    cache: # Cache configuration
-        ehcache: # Ehcache configuration
-            time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
-            max-entries: 100 # Number of objects in each cache entry
-    security:
-        authentication:
-            jwt:
-                secret: my-secret-token-to-change-in-production
-    mail: # specific JHipster mail property, for standard properties see MailProperties
-        base-url: http://127.0.0.1:8080
-    cors:
-        allowed-origins: "*"
-        allowed-methods: GET, PUT, POST, DELETE, OPTIONS
-        allowed-headers: "*"
-        exposed-headers:
-        allow-credentials: true
-        max-age: 1800
-
 application:
     bitcoin:
-        # point this to /rest/chaininfo.json if you have a full node. set it
-        # to 'disabled' if you don't have a bitcoind full node running.
+        # point this to http://<bitcoind-hostname>:8332/rest/chaininfo.json if you have a full node.
+        # set it to 'disabled' if you don't have a bitcoind full node running.
         restUrl: disabled
     mail:
         send: true
@@ -142,11 +72,37 @@ application:
         # insert the hex values of the macaroon obtained in the previous step here!
         invoiceMacaroonHex: 0201036c.....
         readonlyMacaroonHex: 0201036c.....
-
 ```
 
-The most important thing you need to change is to add the hex values for the
+The most important thing you need to change is to change the hostname/port and to add the hex values for the
 macaroons that you saved somewhere in the previous step.
+
+### Start with docker-compose
+
+This will start the docker images from Docker Hub and mount the configuration file:
+
+`docker-compose up`
+
+Now you should see the application when opening `http://localhost:9000/` in your browser.
+
+### Start development env
+
+To start developing you need to start every component manually:
+
+1. Start DB in background: `docker-compose up -d zeus-db`
+1. Start the backend: `cd backend; ../gradlew bootRun`
+1. Start the frontend: `cd frontend; yarn install; yarn start`
+
+Now you should see the application when opening `http://localhost:9000/` in your browser.
+
+## Advanced Configuration / Customization
+
+We built this application as a template so you can build your own fancy
+self-order point of sale screen.
+[You can see a demo video of our version here.](https://twitter.com/gugol/status/1042658297927675905)
+
+The following chapters will guide you through the steps that are necessary to
+customize the generic `Zeus Server` to your needs.
 
 ### Write your own invoice processor
 
@@ -216,19 +172,3 @@ password is `admin`.
 Apart from the default jHipster management tools like user management, metrics,
 health, configuration, audits, logs and API you also have an overview of
 your invoices and a page that displays the status of your LND node.
-
-### Use persistent development DB
-
-```bash
-docker run \
-  -d \
-  -e POSTGRESQL_USER=zeus \
-  -e POSTGRESQL_PASSWORD=zeus \
-  -e POSTGRESQL_DATABASE=zeus \
-  -p 5441:5432 \
-  --name zeus-db \
-  --restart unless-stopped \
-  centos/postgresql-96-centos7
-
-```
-

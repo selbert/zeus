@@ -20,7 +20,7 @@ services:
     backend:
         image: guggero/zeus-backend:latest
         volumes:
-            - ./backend/src/main/resources/config/application-local-zeus.yml:/home/zeus/config/application-dev.yml
+            - ./backend/src/main/resources/config/application-dev.yml:/home/zeus/config/application-dev.yml
             - ./backend/src/main/resources/certs/tls.cert:/home/zeus/config/certs/tls.cert
         networks:
             zeus:
