@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { AuditsService } from 'app/admin/audits/audits.service';
 import { Audit } from 'app/admin/audits/audit.model';
-import { SERVER_API_URL } from 'app/app.constants';
+import { getServerUrl } from 'app/app.constants';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 describe('Service Tests', () => {
@@ -28,7 +28,7 @@ describe('Service Tests', () => {
                 service.query({}).subscribe(() => {});
 
                 const req = httpMock.expectOne({ method: 'GET' });
-                const resourceUrl = SERVER_API_URL + 'management/audits';
+                const resourceUrl = getServerUrl() + 'management/audits';
                 expect(req.request.url).toEqual(resourceUrl);
             });
 

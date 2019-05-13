@@ -3,7 +3,7 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { createRequestOption } from 'app/shared';
-import { SERVER_API_URL } from 'app/app.constants';
+import { getServerUrl } from 'app/app.constants';
 import { Audit } from './audit.model';
 
 @Injectable({ providedIn: 'root' })
@@ -15,7 +15,7 @@ export class AuditsService {
         params.set('fromDate', req.fromDate);
         params.set('toDate', req.toDate);
 
-        const requestURL = SERVER_API_URL + 'management/audits';
+        const requestURL = getServerUrl() + 'management/audits';
 
         return this.http.get<Audit[]>(requestURL, {
             params,

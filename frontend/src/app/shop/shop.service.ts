@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FRONTEND_CONTENT_URL, SERVER_API_URL } from 'app/app.constants';
 import { Observable } from 'rxjs';
+import { FRONTEND_CONTENT_URL, getServerUrl } from 'app/app.constants';
 import { Configuration, FrontendConfiguration } from 'app/shared/model/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ShopService {
-    private availabilityUrl = SERVER_API_URL + 'api/shop/available';
-    private configurationUrl = SERVER_API_URL + 'api/shop/configuration';
+    private availabilityUrl = getServerUrl() + 'api/shop/available';
+    private configurationUrl = getServerUrl() + 'api/shop/configuration';
     private frontendConfigUrl = FRONTEND_CONTENT_URL + 'configuration.json';
 
     constructor(private http: HttpClient) {}

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 
-import { SERVER_API_URL } from 'app/app.constants';
+import { getServerUrl } from 'app/app.constants';
 
 @Injectable({ providedIn: 'root' })
 export class AuthServerProvider {
@@ -20,7 +20,7 @@ export class AuthServerProvider {
             password: credentials.password,
             rememberMe: credentials.rememberMe
         };
-        return this.http.post(SERVER_API_URL + 'api/authenticate', data, { observe: 'response' }).pipe(map(authenticateSuccess.bind(this)));
+        return this.http.post(getServerUrl() + 'api/authenticate', data, { observe: 'response' }).pipe(map(authenticateSuccess.bind(this)));
 
         function authenticateSuccess(resp) {
             const bearerToken = resp.headers.get('Authorization');

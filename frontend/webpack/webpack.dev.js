@@ -5,7 +5,6 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
-const WebpackNotifierPlugin = require('webpack-notifier');
 const path = require('path');
 
 const utils = require('./utils.js');
@@ -19,7 +18,6 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
         contentBase: './build/www',
         proxy: [{
             context: [
-                /* jhipster-needle-add-entity-to-webpack - JHipster will add entity api paths here */
                 '/api',
                 '/management',
                 '/swagger-resources',

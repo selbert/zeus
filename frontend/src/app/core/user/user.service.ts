@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { SERVER_API_URL } from 'app/app.constants';
+import { getServerUrl } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IUser } from './user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-    private resourceUrl = SERVER_API_URL + 'api/users';
+    private resourceUrl = getServerUrl() + 'api/users';
 
     constructor(private http: HttpClient) {}
 
@@ -26,6 +26,6 @@ export class UserService {
     }
 
     authorities(): Observable<string[]> {
-        return this.http.get<string[]>(SERVER_API_URL + 'api/users/authorities');
+        return this.http.get<string[]>(getServerUrl() + 'api/users/authorities');
     }
 }

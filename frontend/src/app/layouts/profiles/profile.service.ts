@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
-import { SERVER_API_URL } from 'app/app.constants';
+import { getServerUrl } from 'app/app.constants';
 import { ProfileInfo } from './profile-info.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-    private infoUrl = SERVER_API_URL + 'management/info';
+    private infoUrl = getServerUrl() + 'management/info';
     private profileInfo: Promise<ProfileInfo>;
 
     constructor(private http: HttpClient) {}

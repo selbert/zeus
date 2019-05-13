@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SERVER_API_URL } from 'app/app.constants';
+import { getServerUrl } from 'app/app.constants';
 import { Invoice } from 'app/shared/model/invoice.model';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, Observer, Subscription } from 'rxjs/index';
@@ -23,8 +23,8 @@ export class InvoiceService {
     listenerObserver: Observer<any>;
 
     private subscription: Subscription;
-    private invoicesUrl = SERVER_API_URL + 'api/invoices';
-    private invoiceUrl = SERVER_API_URL + 'api/invoice';
+    private invoicesUrl = getServerUrl() + 'api/invoices';
+    private invoiceUrl = getServerUrl() + 'api/invoice';
 
     constructor(private http: HttpClient, private $window: WindowRef) {
         this.connection = this.createConnection();
@@ -44,10 +44,10 @@ export class InvoiceService {
             this.connection = this.createConnection();
         }
         // building absolute path so that websocket doesn't fail when deploying with a context path
-        const loc = this.$window.nativeWindow.location;
-        let url;
-        url = '//' + loc.host + loc.pathname + 'websocket/invoice?access_token=';
-        const socket = new SockJS(url);
+        let serverUrl = getServerUrl();
+        serverUrl = serverUrl.replace(/https:\/\//gi, '');
+        serverUrl = serverUrl.replace(/http:\/\//gi, '');
+        const socket = new SockJS('//' + serverUrl + 'websocket/invoice?access_token=');
         this.stompClient = Stomp.over(socket);
         const headers = {};
         this.stompClient.connect(
