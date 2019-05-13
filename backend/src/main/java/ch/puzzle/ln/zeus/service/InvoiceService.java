@@ -55,6 +55,7 @@ public class InvoiceService implements InvoiceHandler {
     private final ShopService shopService;
     private final Set<String> pendingInvoices = new HashSet<>();
     private final Counter paidInvoices;
+    private final Counter createdInvoices;
 
     public InvoiceService(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper, ApplicationProperties applicationProperties,
                           BitcoinService bitcoinService, LndService lndService, ApplicationEventPublisher eventPublisher,
@@ -67,7 +68,8 @@ public class InvoiceService implements InvoiceHandler {
         this.eventPublisher = eventPublisher;
         this.shopService = shopService;
         this.lndService.addInvoiceHandler(this);
-        this.paidInvoices = meterRegistry.counter("zeus_invoices_paid");
+        this.paidInvoices = meterRegistry.counter("zeus.invoices.paid");
+        this.createdInvoices = meterRegistry.counter("zeus.invoices.created");
     }
 
     public InvoiceDTO saveGenerated(Invoice invoice) {
@@ -214,6 +216,7 @@ public class InvoiceService implements InvoiceHandler {
             org.lightningj.lnd.wrapper.message.Invoice generated = lndService.lookupInvoice(hashHex);
             invoice.setCreationDate(unixTimestampToInstant(generated.getCreationDate()));
             pendingInvoices.add(hashHex);
+            createdInvoices.increment();
         } catch (StatusException | ValidationException | IOException e) {
             throw new InternalServerErrorException(e.getMessage());
         }
