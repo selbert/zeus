@@ -16,6 +16,8 @@ import ch.puzzle.ln.zeus.web.rest.errors.OutsideOpeningHoursException;
 import ch.puzzle.ln.zeus.web.rest.vm.DonationVM;
 import ch.puzzle.ln.zeus.web.rest.vm.OrderVM;
 import ch.puzzle.ln.zeus.web.rest.vm.OrderVM.OrderItemVM;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.lightningj.lnd.wrapper.StatusException;
 import org.lightningj.lnd.wrapper.ValidationException;
 import org.lightningj.lnd.wrapper.message.AddInvoiceResponse;
@@ -52,10 +54,11 @@ public class InvoiceService implements InvoiceHandler {
     private final ApplicationEventPublisher eventPublisher;
     private final ShopService shopService;
     private final Set<String> pendingInvoices = new HashSet<>();
+    private final Counter paidInvoices;
 
     public InvoiceService(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper, ApplicationProperties applicationProperties,
                           BitcoinService bitcoinService, LndService lndService, ApplicationEventPublisher eventPublisher,
-                          ShopService shopService) {
+                          ShopService shopService, MeterRegistry meterRegistry) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.applicationProperties = applicationProperties;
@@ -64,6 +67,7 @@ public class InvoiceService implements InvoiceHandler {
         this.eventPublisher = eventPublisher;
         this.shopService = shopService;
         this.lndService.addInvoiceHandler(this);
+        this.paidInvoices = meterRegistry.counter("zeus_invoices_paid");
     }
 
     public InvoiceDTO saveGenerated(Invoice invoice) {
@@ -227,6 +231,7 @@ public class InvoiceService implements InvoiceHandler {
 
             if (invoice.getSettled() && !wasSettledPreviously) {
                 pendingInvoices.remove(hashHex);
+                paidInvoices.increment();
             }
         }
     }
