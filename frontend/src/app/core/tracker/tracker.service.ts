@@ -8,6 +8,7 @@ import { AuthServerProvider } from '../auth/auth-jwt.service';
 
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'webstomp-client';
+import { getWebsocketUrl } from 'app/app.constants';
 
 @Injectable({ providedIn: 'root' })
 export class JhiTrackerService {
@@ -35,10 +36,7 @@ export class JhiTrackerService {
         if (this.connectedPromise === null) {
             this.connection = this.createConnection();
         }
-        // building absolute path so that websocket doesn't fail when deploying with a context path
-        const loc = this.$window.nativeWindow.location;
-        let url;
-        url = '//' + loc.host + loc.pathname + 'websocket/tracker';
+        let url = getWebsocketUrl(this.$window) + 'tracker';
         const authToken = this.authServerProvider.getToken();
         if (authToken) {
             url += '?access_token=' + authToken;

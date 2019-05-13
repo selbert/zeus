@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getServerUrl } from 'app/app.constants';
+import { getServerUrl, getWebsocketUrl } from 'app/app.constants';
 import { Invoice } from 'app/shared/model/invoice.model';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, Observer, Subscription } from 'rxjs/index';
@@ -44,10 +44,7 @@ export class InvoiceService {
             this.connection = this.createConnection();
         }
         // building absolute path so that websocket doesn't fail when deploying with a context path
-        let serverUrl = getServerUrl();
-        serverUrl = serverUrl.replace(/https:\/\//gi, '');
-        serverUrl = serverUrl.replace(/http:\/\//gi, '');
-        const socket = new SockJS('//' + serverUrl + 'websocket/invoice?access_token=');
+        const socket = new SockJS(getWebsocketUrl(this.$window) + 'invoice?access_token=');
         this.stompClient = Stomp.over(socket);
         const headers = {};
         this.stompClient.connect(
