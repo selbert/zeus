@@ -2,7 +2,6 @@ package ch.puzzle.ln.zeus.service;
 
 import ch.puzzle.ln.zeus.config.ApplicationProperties;
 import ch.puzzle.ln.zeus.config.ApplicationProperties.Lnd;
-import ch.puzzle.ln.zeus.service.util.ConvertUtil;
 import io.grpc.Status;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.stub.StreamObserver;
@@ -27,7 +26,7 @@ import static ch.puzzle.ln.zeus.service.util.ConvertUtil.hexToBytes;
 public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.message.Invoice> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LndService.class);
-    private static final long CONNECTION_RETRY_TIMEOUT = 5000;
+    private static final long CONNECTION_RETRY_TIMEOUT = 10000;
     private static final long NODE_LOCKED_RETRY_TIMEOUT = 30000;
 
     private final ResourceLoader resourceLoader;
@@ -161,27 +160,27 @@ public class LndService implements StreamObserver<org.lightningj.lnd.wrapper.mes
 
     @Override
     public void onError(Throwable t) {
-        if (t instanceof ServerSideException && ((ServerSideException) t).getStatus().getCode() == Status.Code.UNIMPLEMENTED) {
-            LOG.error("It seems the lightning node is locked! Please unlock it. Will try again in {} seconds.", NODE_LOCKED_RETRY_TIMEOUT / 1000);
-            try {
-                Thread.sleep(NODE_LOCKED_RETRY_TIMEOUT);
-            } catch (InterruptedException e1) {
-                LOG.error("woke up from sleep, exiting loop", e1);
-            }
-        } else {
-            LOG.error("Subscription for listening to invoices failed!", t);
-        }
         try {
-            resetAsyncApi();
-            subscribeToInvoices();
-        } catch (StatusException | ValidationException | IOException e) {
-            LOG.error("Couldn't subscribe to invoices! sleeping for 5 seconds", e);
+            if (t instanceof ServerSideException && ((ServerSideException) t).getStatus().getCode() == Status.Code.UNIMPLEMENTED) {
+                LOG.error("It seems the lightning node is locked! Please unlock it. Will try again in {} seconds.", NODE_LOCKED_RETRY_TIMEOUT / 1000);
+                Thread.sleep(NODE_LOCKED_RETRY_TIMEOUT);
+            } else {
+                LOG.error("Subscription for listening to invoices failed with message '{}'! Will try again in {} seconds.",
+                    t.getMessage(), CONNECTION_RETRY_TIMEOUT / 1000);
+                Thread.sleep(CONNECTION_RETRY_TIMEOUT);
+            }
+
+            // after waiting an appropriate amount of time, we try again...
             try {
+                resetAsyncApi();
+                subscribeToInvoices();
+            } catch (StatusException | ValidationException | IOException e) {
+                LOG.error("Couldn't subscribe to invoices! sleeping for 5 seconds", e);
                 Thread.sleep(CONNECTION_RETRY_TIMEOUT);
                 onError(e);
-            } catch (InterruptedException e1) {
-                LOG.error("woke up from sleep, exiting loop", e1);
             }
+        } catch (InterruptedException e1) {
+            LOG.error("woke up from sleep, exiting loop", e1);
         }
     }
 
