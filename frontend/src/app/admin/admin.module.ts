@@ -9,7 +9,6 @@ import {
     JhiHealthCheckComponent,
     JhiHealthModalComponent,
     JhiMetricsMonitoringComponent,
-    JhiMetricsMonitoringModalComponent,
     LogsComponent,
     UserMgmtComponent,
     UserMgmtDetailComponent,
@@ -37,13 +36,12 @@ import {
         JhiHealthModalComponent,
         JhiDocsComponent,
         JhiMetricsMonitoringComponent,
-        JhiMetricsMonitoringModalComponent,
         JhiHomeComponent,
         JhiInvoiceComponent,
         JhiInvoiceDetailComponent,
         JhiLightningComponent
     ],
-    entryComponents: [JhiHealthModalComponent, JhiMetricsMonitoringModalComponent],
+    entryComponents: [JhiHealthModalComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ZeusAdminModule {}

@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import * as $ from 'jquery';
 import 'tableexport';
 import { Invoice, InvoiceType } from 'app/shared/model/invoice.model';
-import { Principal } from 'app/core';
+import { Account, AccountService, LoginModalService } from 'app/core';
 import { InvoiceService } from 'app/shared/service/invoice.service';
 
 export const YEAR_MONTH = 'YYYYMM';
@@ -26,11 +26,11 @@ export class JhiInvoiceComponent implements OnInit {
 
     @ViewChild('invoiceTable') invoiceTable: ElementRef;
 
-    constructor(private invoiceService: InvoiceService, private jhiAlertService: JhiAlertService, private principal: Principal) {}
+    constructor(private invoiceService: InvoiceService, private jhiAlertService: JhiAlertService, private accountService: AccountService) {}
 
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then(account => {
+        this.accountService.identity().then((account: Account) => {
             this.currentAccount = account;
         });
     }

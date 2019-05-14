@@ -9,7 +9,7 @@ export class JhiMetricsService {
     constructor(private http: HttpClient) {}
 
     getMetrics(): Observable<any> {
-        return this.http.get(getServerUrl() + 'management/metrics');
+        return this.http.get(getServerUrl() + 'management/jhi-metrics');
     }
 
     threadDump(): Observable<any> {

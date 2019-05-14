@@ -12,16 +12,14 @@ describe('Component Tests', () => {
         let fixture: ComponentFixture<UserMgmtComponent>;
         let service: UserService;
 
-        beforeEach(
-            async(() => {
-                TestBed.configureTestingModule({
-                    imports: [ZeusTestModule],
-                    declarations: [UserMgmtComponent]
-                })
-                    .overrideTemplate(UserMgmtComponent, '')
-                    .compileComponents();
+        beforeEach(async(() => {
+            TestBed.configureTestingModule({
+                imports: [ZeusTestModule],
+                declarations: [UserMgmtComponent]
             })
-        );
+                .overrideTemplate(UserMgmtComponent, '')
+                .compileComponents();
+        }));
 
         beforeEach(() => {
             fixture = TestBed.createComponent(UserMgmtComponent);
@@ -30,32 +28,29 @@ describe('Component Tests', () => {
         });
 
         describe('OnInit', () => {
-            it(
-                'Should call load all on init',
-                inject(
-                    [],
-                    fakeAsync(() => {
-                        // GIVEN
-                        const headers = new HttpHeaders().append('link', 'link;link');
-                        spyOn(service, 'query').and.returnValue(
-                            of(
-                                new HttpResponse({
-                                    body: [new User(123)],
-                                    headers
-                                })
-                            )
-                        );
+            it('Should call load all on init', inject(
+                [],
+                fakeAsync(() => {
+                    // GIVEN
+                    const headers = new HttpHeaders().append('link', 'link;link');
+                    spyOn(service, 'query').and.returnValue(
+                        of(
+                            new HttpResponse({
+                                body: [new User(123)],
+                                headers
+                            })
+                        )
+                    );
 
-                        // WHEN
-                        comp.ngOnInit();
-                        tick(); // simulate async
+                    // WHEN
+                    comp.ngOnInit();
+                    tick(); // simulate async
 
-                        // THEN
-                        expect(service.query).toHaveBeenCalled();
-                        expect(comp.users[0]).toEqual(jasmine.objectContaining({ id: 123 }));
-                    })
-                )
-            );
+                    // THEN
+                    expect(service.query).toHaveBeenCalled();
+                    expect(comp.users[0]).toEqual(jasmine.objectContaining({ id: 123 }));
+                })
+            ));
         });
     });
 });

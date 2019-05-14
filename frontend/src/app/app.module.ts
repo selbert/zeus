@@ -1,10 +1,10 @@
 import './vendor.ts';
 
-import { Injector, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LocalStorageService, Ng2Webstorage, SessionStorageService } from 'ngx-webstorage';
-import { JhiEventManager } from 'ng-jhipster';
+import { NgxWebstorageModule } from 'ngx-webstorage';
+import { NgJhipsterModule } from 'ng-jhipster';
 
 import { AuthInterceptor } from './blocks/interceptor/auth.interceptor';
 import { AuthExpiredInterceptor } from './blocks/interceptor/auth-expired.interceptor';
@@ -15,17 +15,24 @@ import { ZeusCoreModule } from 'app/core';
 import { ZeusAppRoutingModule } from './app-routing.module';
 import { ZeusShopModule } from 'app/shop/shop.module';
 import { ZeusAdminModule } from 'app/admin/admin.module';
+import * as moment from 'moment';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { ErrorComponent, FooterComponent, JhiAdminComponent, JhiShopComponent, NavbarComponent, PageRibbonComponent } from './layouts';
 import { AppComponent } from 'app/app.component';
 import { ZeusDonateModule } from 'app/donate/donate.module';
+import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     imports: [
         BrowserModule,
         ZeusAppRoutingModule,
-        Ng2Webstorage.forRoot({ prefix: 'jhi', separator: '-' }),
-        ZeusSharedModule,
+        NgxWebstorageModule.forRoot({ prefix: 'jhi', separator: '-' }),
+        NgJhipsterModule.forRoot({
+            // set below to true to make alerts look like toast
+            alertAsToast: false,
+            alertTimeout: 5000
+        }),
+        ZeusSharedModule.forRoot(),
         ZeusCoreModule,
         ZeusShopModule,
         ZeusDonateModule,
@@ -45,28 +52,28 @@ import { ZeusDonateModule } from 'app/donate/donate.module';
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
-            multi: true,
-            deps: [LocalStorageService, SessionStorageService]
+            multi: true
         },
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthExpiredInterceptor,
-            multi: true,
-            deps: [Injector]
+            multi: true
         },
         {
             provide: HTTP_INTERCEPTORS,
             useClass: ErrorHandlerInterceptor,
-            multi: true,
-            deps: [JhiEventManager]
+            multi: true
         },
         {
             provide: HTTP_INTERCEPTORS,
             useClass: NotificationInterceptor,
-            multi: true,
-            deps: [Injector]
+            multi: true
         }
     ],
     bootstrap: [AppComponent]
 })
-export class ZeusAppModule {}
+export class ZeusAppModule {
+    constructor(private dpConfig: NgbDatepickerConfig) {
+        this.dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };
+    }
+}

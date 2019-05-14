@@ -4,8 +4,7 @@ import { clone, getProductByKey, PickupLocation, Product, SelfServiceConfigurati
 import { flash } from 'light-it-up';
 import * as _ from 'lodash';
 import * as $ from 'jquery';
-import { forkJoin, interval } from 'rxjs';
-import { Subscription } from 'rxjs/Rx';
+import { forkJoin, interval, Subscription } from 'rxjs';
 import { CheckoutDialogService } from 'app/shop/checkout-dialog.service';
 import { SUCCESS_FLASH_DURATION } from 'app/shop/checkout.component';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -118,9 +117,12 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
         this.orders = this.getSelfServiceOrders();
         this.orders.forEach((order, index) => {
             order.memoPrefix = this.memoPrefix;
-            this.invoiceService.createInvoice(order).subscribe((invoice: Invoice) => {
-                this.orders[index] = invoice;
-            }, err => (this.error = err.error.message));
+            this.invoiceService.createInvoice(order).subscribe(
+                (invoice: Invoice) => {
+                    this.orders[index] = invoice;
+                },
+                err => (this.error = err.error.message)
+            );
         });
     }
 
@@ -136,9 +138,12 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
             this.checkoutDialogService.openDialog(invoice, true, DEFAULT_DIALOG_TIMEOUT_SECONDS);
             if (index >= 0) {
                 this.orders[index] = this.getSelfServiceOrders()[index];
-                this.invoiceService.createInvoice(this.orders[index]).subscribe((newInvoice: Invoice) => {
-                    this.orders[index] = newInvoice;
-                }, err => (this.error = err.error.message));
+                this.invoiceService.createInvoice(this.orders[index]).subscribe(
+                    (newInvoice: Invoice) => {
+                        this.orders[index] = newInvoice;
+                    },
+                    err => (this.error = err.error.message)
+                );
             }
         }, SUCCESS_FLASH_DURATION);
     }

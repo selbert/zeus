@@ -31,7 +31,7 @@
         padding: 40px;
     }
 
-    /deep/ qrcode,
+    ::ng-deep qrcode,
     div.alert {
         position: absolute;
         width: calc(100% - 60px);

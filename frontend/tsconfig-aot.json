@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es6",
         "module": "es2015",
         "moduleResolution": "node",
         "sourceMap": false,
@@ -12,9 +12,7 @@
         "skipLibCheck": true,
         "outDir": "build/www/app",
         "lib": ["es7", "dom"],
-        "typeRoots": [
-            "node_modules/@types"
-        ],
+        "typeRoots": ["node_modules/@types"],
         "baseUrl": "./",
         "paths": {
             "app/*": ["src/app/*"]
@@ -23,7 +21,7 @@
     },
     "angularCompilerOptions": {
         "genDir": "build/aot",
-        "skipMetadataEmit" : true,
+        "skipMetadataEmit": true,
         "fullTemplateTypeCheck": true,
         "preserveWhitespaces": true
     }

@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Renderer } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { JhiEventManager } from 'ng-jhipster';
@@ -12,10 +13,12 @@ import { StateStorageService } from 'app/core/auth/state-storage.service';
 })
 export class JhiLoginModalComponent implements AfterViewInit {
     authenticationError: boolean;
-    password: string;
-    rememberMe: boolean;
-    username: string;
-    credentials: any;
+
+    loginForm = this.fb.group({
+        username: [''],
+        password: [''],
+        rememberMe: [true]
+    });
 
     constructor(
         private eventManager: JhiEventManager,
@@ -24,31 +27,29 @@ export class JhiLoginModalComponent implements AfterViewInit {
         private elementRef: ElementRef,
         private renderer: Renderer,
         private router: Router,
-        public activeModal: NgbActiveModal
-    ) {
-        this.credentials = {};
-    }
+        public activeModal: NgbActiveModal,
+        private fb: FormBuilder
+    ) {}
 
     ngAfterViewInit() {
         setTimeout(() => this.renderer.invokeElementMethod(this.elementRef.nativeElement.querySelector('#username'), 'focus', []), 0);
     }
 
     cancel() {
-        this.credentials = {
-            username: null,
-            password: null,
-            rememberMe: true
-        };
         this.authenticationError = false;
+        this.loginForm.patchValue({
+            username: '',
+            password: ''
+        });
         this.activeModal.dismiss('cancel');
     }
 
     login() {
         this.loginService
             .login({
-                username: this.username,
-                password: this.password,
-                rememberMe: this.rememberMe
+                username: this.loginForm.get('username').value,
+                password: this.loginForm.get('password').value,
+                rememberMe: this.loginForm.get('rememberMe').value
             })
             .then(() => {
                 this.authenticationError = false;
@@ -62,12 +63,12 @@ export class JhiLoginModalComponent implements AfterViewInit {
                     content: 'Sending Authentication Success'
                 });
 
-                // // previousState was set in the authExpiredInterceptor before being redirected to login modal.
-                // // since login is succesful, go to stored previousState and clear previousState
+                // previousState was set in the authExpiredInterceptor before being redirected to login modal.
+                // since login is successful, go to stored previousState and clear previousState
                 const redirect = this.stateStorageService.getUrl();
                 if (redirect) {
                     this.stateStorageService.storeUrl(null);
-                    this.router.navigate([redirect]);
+                    this.router.navigateByUrl(redirect);
                 }
             })
             .catch(() => {

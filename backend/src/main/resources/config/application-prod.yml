@@ -47,7 +47,7 @@ jhipster:
     security:
         authentication:
             jwt:
-                secret: a10a8c4a0d436d7e54657436b26630a5521de9d9
+                secret: my-secret-token-to-change-in-production-must-be-at-least-64-characters
     mail: # specific JHipster mail property, for standard properties see MailProperties
         base-url: http://my-server-url-to-change # Modify according to your server's URL
 

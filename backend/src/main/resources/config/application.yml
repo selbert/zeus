@@ -3,14 +3,16 @@ management:
         web:
             base-path: /
             exposure:
-                include: ["configprops", "env", "health", "info", "threaddump", "prometheus"]
+                include: ["configprops", "env", "health", "info", "threaddump", "prometheus", "jhi-metrics", "metrics", "loggers"]
             path-mapping:
                 configprops: management/configprops
                 env: management/env
                 health: management/health
                 info: management/info
                 threaddump: management/threaddump
-                prometheus: prometheus
+                jhi-metrics: management/jhi-metrics
+                metrics: management/metrics
+                loggers: management/loggers
     endpoint:
         health:
             show-details: when_authorized

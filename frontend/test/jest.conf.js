@@ -4,20 +4,24 @@ module.exports = {
     coverageDirectory: '<rootDir>/build/test-results/',
     globals: {
         'ts-jest': {
-            tsConfigFile: 'tsconfig.json'
-        },
-        __TRANSFORM_HTML__: true
+            stringifyContentPathRegex: '\\.html$',
+            tsConfig: 'tsconfig.json',
+            astTransformers: [require.resolve('jest-preset-angular/InlineHtmlStripStylesTransformer')]
+        }
     },
+    coveragePathIgnorePatterns: [
+        '<rootDir>/test'
+    ],
     moduleNameMapper: {
         'app/(.*)': '<rootDir>/src/app/$1'
     },
     reporters: [
         'default',
-        [ 'jest-junit', { output: './build/test-results/jest/TESTS-results.xml' } ]
+        ['jest-junit', { output: './build/test-results/TESTS-results-jest.xml' }]
     ],
     testResultsProcessor: 'jest-sonar-reporter',
     transformIgnorePatterns: ['node_modules/(?!@angular/common/locales)'],
-    testMatch: ['<rootDir>/test/spec/**/+(*.)+(spec.ts)'],
+    testMatch: ['<rootDir>/test/spec/**/@(*.)@(spec.ts)'],
     rootDir: '../',
-    testURL: "http://localhost/"
+    testURL: 'http://localhost/'
 };

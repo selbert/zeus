@@ -44,7 +44,7 @@
 .payment-request {
     color: black;
 
-    /deep/ qrcode {
+    ::ng-deep qrcode {
         img {
             margin: 0 auto;
         }
@@ -91,7 +91,7 @@
         width: 100%;
     }
 
-    /deep/ fa-icon.success {
+    ::ng-deep fa-icon.success {
         display: block;
         margin: 0 auto;
         width: 6em;

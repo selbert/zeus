@@ -1,15 +1,17 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
-
-import { NgbDateMomentAdapter } from './util/datepicker-adapter';
-import { ZeusSharedCommonModule, ZeusSharedLibsModule, HasAnyAuthorityDirective, JhiLoginModalComponent } from './';
+import { HasAnyAuthorityDirective, JhiLoginModalComponent, ZeusSharedCommonModule, ZeusSharedLibsModule } from './';
 
 @NgModule({
     imports: [ZeusSharedLibsModule, ZeusSharedCommonModule],
     declarations: [JhiLoginModalComponent, HasAnyAuthorityDirective],
-    providers: [{ provide: NgbDateAdapter, useClass: NgbDateMomentAdapter }],
     entryComponents: [JhiLoginModalComponent],
     exports: [ZeusSharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ZeusSharedModule {}
+export class ZeusSharedModule {
+    static forRoot() {
+        return {
+            ngModule: ZeusSharedModule
+        };
+    }
+}

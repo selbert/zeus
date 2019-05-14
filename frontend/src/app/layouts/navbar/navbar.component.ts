@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { VERSION } from 'app/app.constants';
-import { LoginModalService, LoginService, Principal } from 'app/core';
+import { LoginModalService, LoginService, AccountService } from 'app/core';
 import { ProfileService } from '../profiles/profile.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class NavbarComponent implements OnInit {
 
     constructor(
         private loginService: LoginService,
-        private principal: Principal,
+        private accountService: AccountService,
         private loginModalService: LoginModalService,
         private profileService: ProfileService,
         private router: Router
@@ -42,7 +42,7 @@ export class NavbarComponent implements OnInit {
     }
 
     isAuthenticated() {
-        return this.principal.isAuthenticated();
+        return this.accountService.isAuthenticated();
     }
 
     login() {
@@ -57,9 +57,5 @@ export class NavbarComponent implements OnInit {
 
     toggleNavbar() {
         this.isNavbarCollapsed = !this.isNavbarCollapsed;
-    }
-
-    getImageUrl() {
-        return this.isAuthenticated() ? this.principal.getImageUrl() : null;
     }
 }

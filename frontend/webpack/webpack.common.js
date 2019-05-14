@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const rxPaths = require('rxjs/_esm5/path-mapping');
@@ -12,14 +13,13 @@ module.exports = (options) => ({
     resolve: {
         extensions: ['.ts', '.js'],
         modules: ['node_modules'],
-        alias: alias,
+        alias: alias
     },
     stats: {
         children: false
     },
     module: {
         rules: [
-            { test: /bootstrap\/dist\/js\/umd\//, loader: 'imports-loader?jQuery=jquery' },
             {
                 test: /\.html$/,
                 loader: 'html-loader',
@@ -30,15 +30,23 @@ module.exports = (options) => ({
                     minifyJS: false,
                     minifyCSS: false
                 },
-                exclude: ['./src/index.html']
+                exclude: /(src\/index.html)/
             },
             {
                 test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
-                loaders: ['file-loader?hash=sha512&digest=hex&name=content/[hash].[ext]']
+                loader: 'file-loader',
+                options: {
+                    digest: 'hex',
+                    hash: 'sha512',
+                    name: 'content/[hash].[ext]'
+                }
             },
             {
                 test: /manifest.webapp$/,
-                loader: 'file-loader?name=manifest.webapp'
+                loader: 'file-loader',
+                options: {
+                    name: 'manifest.webapp'
+                }
             },
             // Ignore warnings about System.import in Angular
             { test: /[\/\\]@angular[\/\\].+\.js$/, parser: { system: true } },
@@ -77,6 +85,7 @@ module.exports = (options) => ({
             chunks: ['vendors', 'polyfills', 'global', 'main'],
             chunksSortMode: 'manual',
             inject: 'body'
-        })
+        }),
+        new BaseHrefWebpackPlugin({ baseHref: '/' })
     ]
 });
