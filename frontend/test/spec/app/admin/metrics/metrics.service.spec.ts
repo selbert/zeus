@@ -29,7 +29,7 @@ describe('Service Tests', () => {
         service.getMetrics().subscribe(() => {});
 
         const req = httpMock.expectOne({ method: 'GET' });
-        const resourceUrl = SERVER_API_URL + 'management/jhimetrics';
+        const resourceUrl = SERVER_API_URL + 'management/jhi-metrics';
         expect(req.request.url).toEqual(resourceUrl);
       });
 
