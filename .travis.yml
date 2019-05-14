@@ -29,7 +29,7 @@ before_install:
 script: ./gradlew -Pprod clean build
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - if [ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" = "false" ]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       cp backend/src/main/docker/* backend/build/libs;
       docker build -t "guggero/zeus-backend:latest" -t "guggero/zeus-backend:$TRAVIS_BUILD_NUMBER" backend/build/libs/;
