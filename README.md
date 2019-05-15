@@ -4,7 +4,7 @@ Zeus Server is a Lightning Network Point of Sale application for LND, written in
 
 If you are looking for the Mobile App, please visit [ZeusLN/zeus](https://github.com/ZeusLN/zeus).
 
-![screenshot](doc/screenshot.png)
+![screenshot webshop](doc/screenshot-webshop.png)
 
 
 ## Quick Start / How to Use
@@ -94,6 +94,48 @@ To start developing you need to start every component manually:
 1. Start the frontend: `cd frontend; yarn install; yarn start`
 
 Now you should see the application when opening `http://localhost:9000/` in your browser.
+
+## Available modules
+
+The following modules have been implemented so far:
+
+### Web Shop
+
+A classic web shop with a shopping cart and a checkout procedure.
+
+![screenshot webshop](doc/screenshot-webshop.png)
+
+### Self service
+
+A self-order page that only displays a certain number of products that can be ordered by directly paying an
+invoice that is shown. Available for portrait or landscape display orientation.
+
+![screenshot self service portrait](doc/screenshot-self-service.png)
+![screenshot self service landscape](doc/screenshot-self-service-landscape.png)
+
+### Donation
+
+A simple donation form that can be embedded as an iframe for example.
+
+![screenshot donation](doc/screenshot-donation.png)
+
+### Administrative interface
+
+Apart from the default JHipster admin pages for health, metrics, configuration and log configuration,
+there are also two specific interfaces related to the Lightning Network:
+
+#### Invoice overview
+
+A list of all paid and unpaid invoices, can be filtered by type and date.
+
+![screenshot admin invoices](doc/screenshot-admin-invoices.png)
+
+#### Node and channel management
+
+An admin interface that shows some node statistics and the current open channels with their balances.
+
+![screenshot admin channels](doc/screenshot-admin-channels.png)
+
 
 ## Advanced Configuration / Customization
 
