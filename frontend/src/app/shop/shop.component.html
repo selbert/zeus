@@ -1,0 +1,53 @@
+<header class="site-header">
+    <div class="site-branding">
+        <h1 id="site-title">
+            Zeus Web Shop
+        </h1>
+        <h2>
+            Buy delicious products and pay with Bitcoin over the Lightning Network <span class="lightning-bolt"></span>
+        </h2>
+        <div class="alert alert-danger" *ngIf="closed">
+            Our shop is currently closed for online orders.
+        </div>
+    </div>
+</header>
+
+<section class="cards" *ngIf="products">
+    <article class="product-card" *ngFor="let product of products;">
+        <div [class]="'picture product-' + product.productKey.toLowerCase()"></div>
+        <div class="price">
+            <span class="unit">CHF</span>
+            {{product.price | number : '1.2-2'}}
+        </div>
+        <div [class]="'lower product-' + product.productKey.toLowerCase()">
+            <h2>{{product.title}}</h2>
+            <h3>
+                of the day
+            </h3>
+            <button (click)="add(product)">
+                choose {{product.title.toLowerCase()}}
+            </button>
+
+            <div class="cart" *ngFor="let item of product.cart; let i = index">
+                <span class="info">My preferred option is:</span>
+                <select size="1" [(ngModel)]="item.selection">
+                    <option *ngFor="let opt of product.options">
+                        {{opt}}
+                    </option>
+                </select>
+                <button (click)="remove(item, product)">
+                    X
+                </button>
+            </div>
+        </div>
+    </article>
+</section>
+
+<div class="checkout">
+    <button *ngIf="!hasCart" [disabled]="true">
+        Please choose an item to check out
+    </button>
+    <button *ngIf="hasCart" (click)="checkout()">
+        Checkout {{cartItems}} {{cartItems === 1 ? 'item' : 'items'}} (CHF {{cartTotal | number : '1.2-2'}})
+    </button>
+</div>

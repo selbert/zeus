@@ -13,7 +13,96 @@
                 <small>Code/message: {{checkoutError}}</small>
             </div>
         </div>
-        <div class="col-md-11 payment-request">
+        <div class="col-md-11" *ngIf="!order.paymentRequest && !paid">
+            <form class="form" role="form" (ngSubmit)="checkout()" novalidate>
+                <div class="form-group">
+                    <label class="username-label" #name for="name">Name</label>
+                    <input type="text" class="form-control" name="name" id="name"
+                           maxlength="255" placeholder="Your name to claim your order with" [(ngModel)]="order.orderName"
+                           (change)="touched = true" [class.is-invalid]="touched && !valid">
+                </div>
+                <div class="form-group" *ngIf="pickup">
+                    <label for="pickup">Pick-Up</label>
+                    <select class="form-control" name="pickup" id="pickup" [(ngModel)]="pickup">
+                        <option *ngFor="let location of locations" [value]="location.key">{{location.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="availability?.length > 0 && allowPickupDelay">
+                    <label for="time">Pick-Up time</label>
+                    <div class="btn-group btn-group-toggle two-items" ngbRadioGroup name="time" [(ngModel)]="time" id="time">
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input type="radio" ngbButton value="now"> Now
+                        </label>
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input type="radio" ngbButton value="later"> Later
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="(!availability || availability.length === 0) && allowPickupDelay">
+                    <label for="time">Pick-Up time</label>
+                    <div class="input-group-text">
+                        We are closing soon, please pick up your<br/>
+                        order within the next 15 minutes.
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="time === 'later'">
+                    <select class="form-control" name="later" [(ngModel)]="later">
+                        <option *ngFor="let delay of availability" [value]="delay">
+                            In {{delay}} minutes (around {{delayAsTime(delay)}})
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" [disabled]="!valid">
+                    Pay now with Bitcoin <span class="lightning-bolt"></span>
+                    <fa-icon icon="spinner" [spin]="true" *ngIf="loading"></fa-icon>
+                </button>
+
+                <div class="summary">
+                    <h3>Summary</h3>
+                    <table>
+                        <tbody>
+                        <tr *ngFor="let row of getSummary()">
+                            <td [innerHTML]="row.text"></td>
+                            <td align="right">CHF {{row.price | number : '1.2-2'}}</td>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <th align="right">CHF {{getTotal() | number : '1.2-2'}}</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-11 payment-request" *ngIf="order.paymentRequest && !paid">
+            <div class="intro">
+                Please pay this invoice with your Lightning Network enabled wallet
+                by scanning the QR code or by clicking on it if your wallet is on
+                the same device.
+            </div>
+            <a [href]="paymentLink">
+                <qrcode [qrdata]="order.paymentRequest" [size]="300" level="L" [attr.title]="''"></qrcode>
+            </a>
+            <div class="total">
+                Total: <strong>CHF {{order.amountChf | number : '1.2-2'}}</strong>
+            </div>
+            <div class="info-row">
+                <div class="left">{{order.amount | number : '1.0-0'}} Satoshi</div>
+                <div class="right">{{order.exchangeRate | number : '1.2-2'}} CHF/BTC</div>
+            </div>
+            <div class="summary">
+                <h3>Summary</h3>
+                <table>
+                    <tbody>
+                    <tr *ngFor="let row of getSummary()">
+                        <td [innerHTML]="row.text"></td>
+                        <td align="right">CHF {{row.price | number : '1.2-2'}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-11 payment-request" *ngIf="paid">
             <fa-icon size="6x" icon="check-circle" class="success"></fa-icon>
             <div class="intro">
                 Thank you for your payment of CHF {{order.amountChf | number : '1.2-2'}}

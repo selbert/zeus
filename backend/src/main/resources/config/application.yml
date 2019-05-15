@@ -142,13 +142,18 @@ application:
     shop:
         allowPickupDelay: false
         products:
-            - title: 'Large'
+            - title: 'Large Beer'
               productKey: 'LARGE'
               price: 2
               options:
                   - '"Lightning ale"'
-            - title: 'Small'
+                  - '"Block brew"'
+            - title: 'Small Beer'
               productKey: 'SMALL'
               price: 1
               options:
                   - '"Coin stout"'
+                  - '"Thunderous amber"'
+        locations:
+            - name: 'Puzzle Headquarters Berne'
+              key: 'PUZZLE'

@@ -28,6 +28,56 @@ html {
             }
         }
 
+        header {
+            margin: 0 auto 50px auto;
+            width: 99%;
+
+            @media all and (min-width: 860px) {
+                width: 700px;
+            }
+
+            .site-branding {
+                background-color: white;
+                box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.3);
+                border-radius: 10px;
+
+                h1 {
+                    display: block;
+                    margin: 0 auto;
+                    width: 410px;
+                    padding: 30px 20px 20px 20px;
+                    text-align: center;
+
+                    img {
+                        display: inline-block;
+                        width: auto;
+                        max-height: 4.62rem;
+                        vertical-align: middle;
+
+                        @media all and (max-width: 840px) {
+                            width: 80%;
+                            height: auto;
+                        }
+                    }
+                }
+
+                h2 {
+                    text-align: center;
+                    display: block;
+                    margin: 0 auto;
+                    font-size: 100%;
+                    font-weight: 400;
+                    padding: 0 3px 20px 3px;
+                }
+
+                .alert {
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    text-align: center;
+                }
+            }
+        }
+
         .content-box {
             margin: 0 auto 50px auto;
             width: 99%;

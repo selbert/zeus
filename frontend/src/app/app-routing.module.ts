@@ -6,6 +6,7 @@ import { adminState } from 'app/admin';
 import { SelfServiceComponent } from 'app/shop/self-service.component';
 import { SelfServiceLandscapeComponent } from 'app/shop/self-service-landscape.component';
 import { DonateComponent } from 'app/donate/donate.component';
+import { ShopComponent } from 'app/shop/shop.component';
 
 @NgModule({
     imports: [
@@ -42,6 +43,10 @@ import { DonateComponent } from 'app/donate/donate.component';
                 {
                     path: 'donate/:id',
                     component: DonateComponent
+                },
+                {
+                    path: 'shop',
+                    component: ShopComponent
                 },
                 {
                     path: 'admin',

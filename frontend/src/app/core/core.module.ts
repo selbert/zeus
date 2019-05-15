@@ -2,7 +2,7 @@ import { LOCALE_ID, NgModule } from '@angular/core';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
-import locale from '@angular/common/locales/de';
+import locale from '@angular/common/locales/de-CH';
 
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateMomentAdapter } from 'app/shared/util/datepicker-adapter';
