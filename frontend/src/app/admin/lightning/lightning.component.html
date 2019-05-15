@@ -10,9 +10,15 @@
         <div class="col-md-6">
             <b>LND</b>
             <div class="row"
-                 *ngFor="let key of ['block_height', 'block_hash', 'alias', 'identity_pubkey', 'chains', 'testnet']">
+                 *ngFor="let key of ['block_height', 'block_hash', 'alias', 'identity_pubkey', 'testnet']">
                 <div class="col-md-3">{{capitalize(key)}}</div>
                 <div class="col-md-9 text-right">{{info.lndInfo[key]}}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">Chains</div>
+                <div class="col-md-9 text-right">
+                    <span *ngFor="let chain of info.lndInfo.chains">{{capitalize(chain.chain)}} {{chain.network}}</span>
+                </div>
             </div>
         </div>
 
@@ -25,8 +31,8 @@
             </div>
             <div class="row">
                 <div class="col-md-3">Price CHF</div>
-                <div class="col-md-9 text-right">{{info.bitcoinPrice.buy |
-                    number : '1.2-2'}}
+                <div class="col-md-9 text-right">
+                    {{info.bitcoinPrice.buy |                    number : '1.2-2'}}
                 </div>
             </div>
         </div>
