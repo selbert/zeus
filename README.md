@@ -35,7 +35,7 @@ This application is network agnostic, so it does not matter if you are running
 `testnet` first!
 
 After the LND node is running and is fully synced to the chain, follow the steps
-above. We assume that LND saves its files to `~/.lnd/`. If you changed that
+below. We assume that LND saves its files to `~/.lnd/`. If you changed that
 path, adjust the following example paths accordingly. 
 
 * Make sure the gRPC port (default `10009`) of the node is open and reachable
@@ -103,26 +103,41 @@ The following modules have been implemented so far:
 
 A classic web shop with a shopping cart and a checkout procedure.
 
+URL: `http://host:port/#/shop`
+
 ![screenshot webshop](doc/screenshot-webshop.png)
+![screenshot webshop checkout](doc/screenshot-checkout.png)
 
 ### Self service
 
 A self-order page that only displays a certain number of products that can be ordered by directly paying an
 invoice that is shown. Available for portrait or landscape display orientation.
 
+URL: `http://host:port#/self-service/INVOICE-PREFIX`
+
 ![screenshot self service portrait](doc/screenshot-self-service.png)
+
+
+URL: `http://host:port/#/self-service-landscape/INVOICE-PREFIX`
+
 ![screenshot self service landscape](doc/screenshot-self-service-landscape.png)
 
 ### Donation
 
 A simple donation form that can be embedded as an iframe for example.
 
+URL: `http://host:port/#/donate/DONATION-TEXT`
+
 ![screenshot donation](doc/screenshot-donation.png)
 
 ### Administrative interface
 
 Apart from the default JHipster admin pages for health, metrics, configuration and log configuration,
-there are also two specific interfaces related to the Lightning Network:
+there are also two specific interfaces related to the Lightning Network.
+
+URL: `http://host:port/#/admin`
+
+The default username is `admin` and the password is `admin`.
 
 #### Invoice overview
 
@@ -202,15 +217,3 @@ To change the way the self-order store looks, edit the following files:
 
 * `src/main/webapp/app/shop/self-service.component.html`
 * `src/main/webapp/app/shop/self-service.component.scss`
-
-## Misc
-
-### Admin GUI
-
-There is a whole admin area available if you change the URL from
-`/#/self-service` to `/#/admin`. The default username is `admin` and the
-password is `admin`.
-
-Apart from the default jHipster management tools like user management, metrics,
-health, configuration, audits, logs and API you also have an overview of
-your invoices and a page that displays the status of your LND node.
