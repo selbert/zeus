@@ -138,6 +138,7 @@ export class SelfServiceComponent implements OnDestroy {
             this.checkoutDialogService.openDialog(invoice, true, DEFAULT_DIALOG_TIMEOUT_SECONDS);
             if (index >= 0) {
                 this.orders[index] = this.getSelfServiceOrders()[index];
+                this.orders[index].memoPrefix = this.memoPrefix;
                 this.invoiceService.createInvoice(this.orders[index]).subscribe(
                     (newInvoice: Invoice) => {
                         this.orders[index] = newInvoice;

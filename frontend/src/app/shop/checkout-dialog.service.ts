@@ -10,7 +10,7 @@ export class CheckoutDialogService {
 
     constructor(private modalService: NgbModal, private invoiceService: InvoiceService) {}
 
-    openDialog(order: Invoice, paid = false, timeoutSeconds: number = null): NgbModalRef {
+    openDialog(order: Invoice, paid = false, timeoutSeconds: number = null, beerTap = false): NgbModalRef {
         if (this.isOpen) {
             return;
         }
@@ -34,6 +34,10 @@ export class CheckoutDialogService {
 
         if (paid) {
             modalRef.componentInstance.paid = true;
+        }
+
+        if (beerTap) {
+            modalRef.componentInstance.beerTap = true;
         }
 
         modalRef.result.then(

@@ -38,6 +38,7 @@ export class JhiCheckoutModalComponent implements AfterViewInit {
     countDownValue = 0;
     availability = null;
     closed = false;
+    beerTap = false;
 
     @ViewChild('name') nameField: ElementRef;
 

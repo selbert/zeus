@@ -13,7 +13,11 @@ import { ShopService } from 'app/shop/shop.service';
 
 const DEFAULT_COUNTDOWN_SECONDS = 300;
 const DEFAULT_DIALOG_TIMEOUT_SECONDS = 6;
+const DEFAULT_BEER_DIALOG_TIMEOUT_SECONDS = 2;
 const DEFAULT_WEBSOCKET_RETRY_TIMEOUT = 5000;
+
+// see https://github.com/puzzle/lightning-beer-tap
+const BEER_TAP_INVOICE_PREFIX = 'beerTap';
 
 @Component({
     selector: 'jhi-self-service-landscape',
@@ -135,9 +139,15 @@ export class SelfServiceLandscapeComponent implements OnDestroy {
             duration: SUCCESS_FLASH_DURATION
         });
         setTimeout(() => {
-            this.checkoutDialogService.openDialog(invoice, true, DEFAULT_DIALOG_TIMEOUT_SECONDS);
+            if (invoice.memo.startsWith(BEER_TAP_INVOICE_PREFIX)) {
+                this.checkoutDialogService.openDialog(invoice, true, DEFAULT_BEER_DIALOG_TIMEOUT_SECONDS, true);
+            } else {
+                this.checkoutDialogService.openDialog(invoice, true, DEFAULT_DIALOG_TIMEOUT_SECONDS);
+            }
+
             if (index >= 0) {
                 this.orders[index] = this.getSelfServiceOrders()[index];
+                this.orders[index].memoPrefix = this.memoPrefix;
                 this.invoiceService.createInvoice(this.orders[index]).subscribe(
                     (newInvoice: Invoice) => {
                         this.orders[index] = newInvoice;
