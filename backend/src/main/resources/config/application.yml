@@ -144,13 +144,13 @@ application:
         products:
             - title: 'Large Beer'
               productKey: 'LARGE'
-              price: 2
+              price: 0.21
               options:
                   - '"Lightning ale"'
                   - '"Block brew"'
             - title: 'Small Beer'
               productKey: 'SMALL'
-              price: 1
+              price: 0.11
               options:
                   - '"Coin stout"'
                   - '"Thunderous amber"'
