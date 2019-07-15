@@ -39,7 +39,8 @@ below. We assume that LND saves its files to `~/.lnd/`. If you changed that
 path, adjust the following example paths accordingly. 
 
 * Make sure the gRPC port (default `10009`) of the node is open and reachable
-* Copy the file `~/.lnd/tls.cert` to the folder `src/main/resources/certs` and also name it `tls.cert`
+* Copy the file `~/.lnd/tls.cert` to the folder `backend/src/main/resources/certs` of your local
+  Zeus source checkout location and also name it `tls.cert`
 * Get the hex value of the `invoice.macaroon` and store it somewhere, we'll need
   this later.  
   Use this command for example:  
