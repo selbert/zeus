@@ -26,13 +26,15 @@ export interface Invoice {
     settleDate?: Moment;
     paymentRequest?: string;
     orderItems?: OrderItem[];
-    invoiceType: InvoiceType;
+    invoiceType?: InvoiceType;
+    amountInSats?: boolean;
 }
 
 export enum InvoiceType {
     SELF_ORDER = 'SELF_ORDER',
     WEB_SHOP = 'WEB_SHOP',
-    DONATION = 'DONATION'
+    DONATION = 'DONATION',
+    BEER_TAP = 'BEER_TAP'
 }
 
 export const COLORS = ['Blue', 'Red', 'Green', 'Yellow', 'White', 'Black', 'Purple', 'Pink', 'Brown', 'Grey', 'Orange'];

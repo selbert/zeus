@@ -7,6 +7,7 @@ import ch.puzzle.ln.zeus.service.dto.InvoiceDTO;
 import ch.puzzle.ln.zeus.web.rest.errors.BadRequestAlertException;
 import ch.puzzle.ln.zeus.web.rest.errors.InternalServerErrorException;
 import ch.puzzle.ln.zeus.web.rest.util.HeaderUtil;
+import ch.puzzle.ln.zeus.web.rest.vm.BeerTapVM;
 import ch.puzzle.ln.zeus.web.rest.vm.DonationVM;
 import ch.puzzle.ln.zeus.web.rest.vm.OrderVM;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -57,6 +58,22 @@ public class InvoiceResource {
     public ResponseEntity<InvoiceDTO> createDonation(@Valid @RequestBody DonationVM donation) {
         LOG.debug("REST request to save donation : {}", donation);
         Invoice invoice = invoiceService.validateAndMapDonation(donation);
+        invoiceService.generateLndInvoice(invoice);
+        InvoiceDTO result = invoiceService.saveGenerated(invoice);
+
+        try {
+            return ResponseEntity.created(new URI("/api/invoices/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+                .body(result);
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
+
+    @PostMapping("/invoice/beertap")
+    public ResponseEntity<InvoiceDTO> createBeerInvoice(@Valid @RequestBody BeerTapVM beerTap) {
+        LOG.debug("REST request to save beerTap : {}", beerTap);
+        Invoice invoice = invoiceService.validateAndMapBeerTap(beerTap);
         invoiceService.generateLndInvoice(invoice);
         InvoiceDTO result = invoiceService.saveGenerated(invoice);
 

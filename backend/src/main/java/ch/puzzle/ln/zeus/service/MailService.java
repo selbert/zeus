@@ -123,7 +123,7 @@ public class MailService {
         data.put("taxAmount", ConvertUtil.formatCurrency(ticker, totalChf * taxMultiplier));
         data.put("total", ConvertUtil.formatCurrency(ticker, totalChf));
         data.put("paymentText", mail.getPaymentText());
-        if (invoice.getPickupDelayMinutes() == 0) {
+        if (invoice.getPickupDelayMinutes() != null && invoice.getPickupDelayMinutes() == 0) {
             data.put("pickup", "NOW! (" + formatTime(invoice.getSettleDate()) + ")");
         } else if (invoice.getPickupDelayMinutes() != null) {
             Instant pickupTime = invoice.getSettleDate()

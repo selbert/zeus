@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import * as $ from 'jquery';
 import 'tableexport';
 import { Invoice, InvoiceType } from 'app/shared/model/invoice.model';
-import { Account, AccountService, LoginModalService } from 'app/core';
+import { Account, AccountService } from 'app/core';
 import { InvoiceService } from 'app/shared/service/invoice.service';
 
 export const YEAR_MONTH = 'YYYYMM';
@@ -73,6 +73,10 @@ export class JhiInvoiceComponent implements OnInit {
         return _.sumBy(this.filteredInvoices, 'amountChf');
     }
 
+    get filteredTotalSat() {
+        return _.sumBy(this.filteredInvoices, 'amount');
+    }
+
     get filteredAvgRate() {
         return _.sumBy(this.filteredInvoices, 'exchangeRate') / this.filteredInvoices.length;
     }
@@ -95,6 +99,8 @@ export class JhiInvoiceComponent implements OnInit {
                 return 'Self Order';
             case InvoiceType.DONATION:
                 return 'Donation';
+            case InvoiceType.BEER_TAP:
+                return 'Beer Tap';
             default:
                 return 'Web Shop';
         }

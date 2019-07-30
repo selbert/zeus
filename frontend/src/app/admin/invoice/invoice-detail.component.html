@@ -67,6 +67,10 @@
                         <fa-icon icon="donate"></fa-icon>
                         <span>Donation</span>
                     </div>
+                    <div *ngIf="invoice.invoiceType === 'BEER_TAP'">
+                        <fa-icon icon="beer"></fa-icon>
+                        <span>Beer Tap</span>
+                    </div>
                 </dd>
                 <dt><span>Payment Request</span></dt>
                 <dd>

@@ -4,7 +4,7 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 import { JhiAdminComponent } from 'app/layouts';
 import { adminState } from 'app/admin';
 import { SelfServiceComponent } from 'app/shop/self-service.component';
-import { SelfServiceLandscapeComponent } from 'app/shop/self-service-landscape.component';
+import { BeerTapComponent } from 'app/shop/beer-tap.component';
 import { DonateComponent } from 'app/donate/donate.component';
 import { ShopComponent } from 'app/shop/shop.component';
 
@@ -27,13 +27,13 @@ import { ShopComponent } from 'app/shop/shop.component';
                     component: SelfServiceComponent
                 },
                 {
-                    path: 'self-service-landscape',
-                    redirectTo: '/self-service-landscape/zeus',
+                    path: 'beer-tap',
+                    redirectTo: '/beer-tap/beerTapSingle',
                     pathMatch: 'full'
                 },
                 {
-                    path: 'self-service-landscape/:id',
-                    component: SelfServiceLandscapeComponent
+                    path: 'beer-tap/:id',
+                    component: BeerTapComponent
                 },
                 {
                     path: 'donate',

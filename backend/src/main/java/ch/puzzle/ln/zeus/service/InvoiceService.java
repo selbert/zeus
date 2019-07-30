@@ -13,9 +13,10 @@ import ch.puzzle.ln.zeus.service.util.ConvertUtil;
 import ch.puzzle.ln.zeus.web.rest.errors.InternalServerErrorException;
 import ch.puzzle.ln.zeus.web.rest.errors.InvalidOrderException;
 import ch.puzzle.ln.zeus.web.rest.errors.OutsideOpeningHoursException;
+import ch.puzzle.ln.zeus.web.rest.vm.BeerTapVM;
 import ch.puzzle.ln.zeus.web.rest.vm.DonationVM;
+import ch.puzzle.ln.zeus.web.rest.vm.OrderItemVM;
 import ch.puzzle.ln.zeus.web.rest.vm.OrderVM;
-import ch.puzzle.ln.zeus.web.rest.vm.OrderVM.OrderItemVM;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.lightningj.lnd.wrapper.StatusException;
@@ -198,9 +199,37 @@ public class InvoiceService implements InvoiceHandler {
         return invoice;
     }
 
+    public Invoice validateAndMapBeerTap(BeerTapVM beerTap) {
+        Invoice invoice = new Invoice();
+        invoice.setOrderName(beerTap.getOrderName());
+        invoice.setInvoiceType(InvoiceType.BEER_TAP);
+        invoice.setReferenceId(UUID.randomUUID().toString().toLowerCase());
+        if (beerTap.isAmountInSats()) {
+            invoice.setAmountChf(0.0d);
+            invoice.setExchangeRate(0.0d);
+            invoice.setAmount(beerTap.getAmount().longValue());
+        } else {
+            calculatePrice(invoice, beerTap.getAmount());
+        }
+        beerTap.getOrderItems().forEach(i -> {
+            OrderItem item = new OrderItem();
+            item.setProductKey(i.getProductKey());
+            item.setCount(i.getCount());
+            item.setOptions(i.getOptions());
+            item.setInvoice(invoice);
+            invoice.getOrderItems().add(item);
+        });
+        invoice.setMemo(beerTap.getMemoPrefix() + " " + invoice.getReferenceIdShort() + ": " + beerTap.getOrderName());
+        return invoice;
+    }
+
     public void calculatePrice(Invoice invoice) {
-        Double exchangeRate = bitcoinService.buyPricePerBitcoinIn(applicationProperties.getCurrencyTicker());
         Double total = calculateTotalChf(invoice, applicationProperties.getShop());
+        calculatePrice(invoice, total);
+    }
+
+    private void calculatePrice(Invoice invoice, Double total) {
+        Double exchangeRate = bitcoinService.buyPricePerBitcoinIn(applicationProperties.getCurrencyTicker());
         invoice.setAmountChf(total);
         invoice.setExchangeRate(exchangeRate);
         invoice.setAmount(bitcoinService.satoshisForPrice(total, exchangeRate));

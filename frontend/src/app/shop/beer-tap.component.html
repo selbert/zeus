@@ -1,0 +1,65 @@
+<div class="self-service-grid" *ngIf="products && products.length === 1">
+    <div class="grid-card one top-left">
+        <section>
+            <div [class]="'picture ' + products[0].productKey.toLowerCase()"></div>
+            <div class="price" *ngIf="!products[0].amountInSats">
+                <span class="unit">CHF</span>
+                {{products[0].amount | number : '1.2-2'}}
+            </div>
+            <div class="price-sats" *ngIf="products[0].amountInSats">
+                {{products[0].amount | number : '1.0-0'}}
+                <span class="unit">Sats</span>
+            </div>
+        </section>
+    </div>
+
+    <div class="grid-card two top-right" id="flash-receiver-0">
+        <h3>
+            {{products[0].title}}<br/>
+            {{orders[0].orderItems[0].options[0]}}
+        </h3>
+        <qrcode *ngIf="orders[0].paymentRequest"
+                [qrdata]="orders[0].paymentRequest"
+                [size]="qrCodeSize"
+                level="L"
+                [colordark]="'#1e5a96'"
+                [colorlight]="'#f3efef'"
+                [attr.title]="''">
+        </qrcode>
+        <div class="alert alert-danger" *ngIf="!orders[0].paymentRequest">
+            Shop is currently closed for online orders. Please come back tomorrow!
+        </div>
+    </div>
+</div>
+
+<div class="self-service-grid" *ngIf="products && products.length > 1">
+    <div *ngFor="let product of products; let i = index"
+         [ngClass]="'grid-card ' + getClasses(i)"
+         id="flash-receiver-{{i}}">
+        <h3>
+            {{products[i].title}}<br/>
+            {{orders[i].orderItems[0].options[0]}}
+        </h3>
+        <qrcode *ngIf="orders[i].paymentRequest"
+                [qrdata]="orders[i].paymentRequest"
+                [size]="qrCodeSize"
+                level="L"
+                [colordark]="'#1e5a96'"
+                [colorlight]="'#f3efef'"
+                [attr.title]="''">
+        </qrcode>
+        <section>
+            <div class="price" *ngIf="!product.amountInSats">
+                <span class="unit">CHF</span>
+                {{product.amount | number : '1.2-2'}}
+            </div>
+            <div class="price-sats" *ngIf="product.amountInSats">
+                {{product.amount | number : '1.0-0'}}
+                <span class="unit">Sats</span>
+            </div>
+        </section>
+        <div class="alert alert-danger" *ngIf="!orders[i].paymentRequest">
+            Shop is currently closed for online orders. Please come back tomorrow!
+        </div>
+    </div>
+</div>

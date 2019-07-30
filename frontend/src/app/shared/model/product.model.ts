@@ -24,16 +24,30 @@ export interface PickupLocation {
 
 export interface FrontendConfiguration {
     selfService: SelfServiceConfiguration;
+    [key: string]: BeerTapConfiguration | SelfServiceConfiguration;
 }
 
 export interface SelfServiceConfiguration {
     products: SelfServiceProduct[];
 }
 
+export interface BeerTapConfiguration {
+    products: BeerTapProduct[];
+    orderName: string;
+}
+
 export interface SelfServiceProduct {
     productKey: string;
     optionOverride?: string[];
     titleOverride?: string;
+}
+
+export interface BeerTapProduct {
+    title: string;
+    productKey: string;
+    amount: number;
+    amountInSats: boolean;
+    subtitle: string;
 }
 
 export type OpeningHours = { [K in WeekDay]: OpeningHour };

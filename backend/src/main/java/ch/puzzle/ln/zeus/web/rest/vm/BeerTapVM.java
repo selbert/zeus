@@ -1,19 +1,16 @@
 package ch.puzzle.ln.zeus.web.rest.vm;
 
-import ch.puzzle.ln.zeus.domain.enums.InvoiceType;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderVM {
+public class BeerTapVM {
 
     @NotNull
     private String orderName;
-    private String pickupLocation;
-    private Integer pickupDelayMinutes;
-    private InvoiceType invoiceType;
+    private Double amount;
+    private boolean amountInSats;
     private String memoPrefix;
 
     @NotEmpty
@@ -27,20 +24,20 @@ public class OrderVM {
         this.orderName = orderName;
     }
 
-    public String getPickupLocation() {
-        return pickupLocation;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setPickupLocation(String pickupLocation) {
-        this.pickupLocation = pickupLocation;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
-    public Integer getPickupDelayMinutes() {
-        return pickupDelayMinutes;
+    public boolean isAmountInSats() {
+        return amountInSats;
     }
 
-    public void setPickupDelayMinutes(Integer pickupDelayMinutes) {
-        this.pickupDelayMinutes = pickupDelayMinutes;
+    public void setAmountInSats(boolean amountInSats) {
+        this.amountInSats = amountInSats;
     }
 
     public List<OrderItemVM> getOrderItems() {
@@ -49,14 +46,6 @@ public class OrderVM {
 
     public void setOrderItems(List<OrderItemVM> orderItems) {
         this.orderItems = orderItems;
-    }
-
-    public InvoiceType getInvoiceType() {
-        return invoiceType;
-    }
-
-    public void setInvoiceType(InvoiceType invoiceType) {
-        this.invoiceType = invoiceType;
     }
 
     public String getMemoPrefix() {

@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import static ch.puzzle.ln.zeus.domain.enums.InvoiceType.BEER_TAP;
+
 @Service
 public class MailSendOrderProcessor implements ApplicationListener<InvoiceEvent> {
 
@@ -33,7 +35,7 @@ public class MailSendOrderProcessor implements ApplicationListener<InvoiceEvent>
 
         // Make sure we only send an e-mail if the invoice has been settled
         // for the first time.
-        if (invoice.isSettled() && event.isFirstSettleEvent()) {
+        if (invoice.isSettled() && event.isFirstSettleEvent() && invoice.getInvoiceType() != BEER_TAP) {
             mailService.sendOrderConfirmation(invoice);
         }
     }

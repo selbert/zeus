@@ -18,5 +18,36 @@
                 "optionOverride": ["\"Thunderous amber\""]
             }
         ]
+    },
+    "beerTapSingle": {
+        "products": [
+            {
+                "title": "Large Beer",
+                "productKey": "LARGE",
+                "amount": 2000,
+                "amountInSats": true,
+                "subtitle": "\"Lightning ale\""
+            }
+        ],
+        "orderName": "Enjoy!"
+    },
+    "beerTapDouble": {
+        "products": [
+            {
+                "title": "Large Beer",
+                "productKey": "LEFT_TAP",
+                "amount": 2000,
+                "amountInSats": true,
+                "subtitle": "\"Lightning ale\""
+            },
+            {
+                "title": "Large Beer",
+                "productKey": "RIGHT_TAP",
+                "amount": 2000,
+                "amountInSats": true,
+                "subtitle": "\"Block brew\""
+            }
+        ],
+        "orderName": "Enjoy!"
     }
 }

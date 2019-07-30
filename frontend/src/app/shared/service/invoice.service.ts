@@ -39,6 +39,10 @@ export class InvoiceService {
         return this.http.post<Invoice>(`${this.invoiceUrl}/donation`, donation);
     }
 
+    createBeerTapInvoice(order) {
+        return this.http.post<Invoice>(`${this.invoiceUrl}/beertap`, order);
+    }
+
     connect(errCb) {
         if (this.connectedPromise === null) {
             this.connection = this.createConnection();
