@@ -1,2 +1,2 @@
-rootProject.name = 'zeus-parent'
+rootProject.name = 'zeus'
 include 'backend', 'frontend'
